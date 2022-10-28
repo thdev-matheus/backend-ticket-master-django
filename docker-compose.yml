@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  pydb:
+    container_name: pydb
+    image: postgres:latest
+    env_file:
+      - .env
+    ports:
+      - 5050:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U <nome_do_usuario_do_.env> -d <nome_do_db_do_.env>"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    # Se quiser criar um volume para não perder os dados quando fizer um compose down basta criar ele aqui e referenciar nos volumes abaixo
+    # volumes:
+    #   - ticketmaster:/var/lib/postgresql/data
+    
+  pymig: # Sim, tem que criar um serviço para as migrações iniciais
+    container_name: pymig
+    build: .
+    env_file:
+      - .env
+    command:
+      bash -c 'while !</dev/tcp/pydb/5432; do sleep 1; done; python manage.py migrate' # comando para as migrations
+    volumes:
+      - .:/code
+    depends_on:
+      - pydb
+
+  pyapi:
+    container_name: pyapi
+    build: .
+    env_file:
+      - .env
+    command:
+      bash -c 'while !</dev/tcp/pydb/5432; do sleep 1; done; python manage.py runserver 0.0.0.0:8000'
+    volumes:
+      - .:/code
+    stdin_open: true 
+    tty: true
+    ports:
+      - 8000:8000
+    depends_on:
+      - pydb
+      - pymig
+
+# descomente se quiser referenciar algum volume criado
+# volumes:
+#   talks:
+#     external: true
