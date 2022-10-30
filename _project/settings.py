@@ -52,7 +52,12 @@ THIRD_PART_APPS = [
     "drf_spectacular",
 ]
 
-MY_APPS = []
+MY_APPS = [
+    "users",
+    "comments",
+    "departments",
+    "tickets"
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PART_APPS + MY_APPS
 
@@ -165,7 +170,7 @@ STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# AUTH_USER_MODEL = "accounts.Account"
+AUTH_USER_MODEL = "users.User"
 
 # Config do rest_framework
 REST_FRAMEWORK = {
