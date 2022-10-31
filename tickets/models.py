@@ -20,10 +20,17 @@ class Ticket(models.Model):
         choices=UrgencyCategories.choices,
         default=UrgencyCategories.DEFAULT,
     )
-    department_id = models.ForeignKey(
+    department = models.ForeignKey(
         "departments.Department",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="tickets",
+    )
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="tickets"
     )
