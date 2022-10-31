@@ -20,6 +20,7 @@ class PatchDeleteDepartmentView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdm]
     queryset = Department.objects.all()
     serializer_class = DepartmentPatchSerializer
+    lookup_url_kwarg = "department_id"
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -35,6 +36,7 @@ class ReactivateDepartmentView(generics.UpdateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdm]
     queryset = Department.objects.all()
+    lookup_url_kwarg = "department_id"
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
