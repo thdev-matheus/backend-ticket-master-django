@@ -27,3 +27,8 @@ class TicketModelTest(TestCase):
         with self.assertRaises(ValidationError):
             ticket = Ticket(description="descrição", urgency="chave_errada")
             ticket.full_clean()
+
+    def test_create_ticket_without_description(self):
+        with self.assertRaises(ValidationError):
+            ticket = Ticket(urgency=UrgencyCategories.DEFAULT)
+            ticket.full_clean()
