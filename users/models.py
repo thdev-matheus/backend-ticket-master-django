@@ -7,7 +7,7 @@ from django.db import models
 class User(AbstractUser):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     username = models.CharField(max_length=20, unique=True)
-    department_id = models.ForeignKey(
+    department = models.ForeignKey(
         "departments.Department",
         on_delete=models.CASCADE,
         blank=True,
