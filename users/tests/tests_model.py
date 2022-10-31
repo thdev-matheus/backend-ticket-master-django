@@ -36,3 +36,9 @@ class UserModelTest(TestCase):
         self.assertIn("password", vars(user))
         self.assertIn("department_id", vars(user))
         self.assertIsNone(user.department_id)
+
+    def test_unique_username(self):
+        user = baker.make("users.User")
+
+        with self.assertRaises(IntegrityError):
+            baker.make("users.User", username=user.username)
