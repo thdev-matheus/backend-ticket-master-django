@@ -11,8 +11,15 @@ from rest_framework.authentication import TokenAuthentication
 
 class UserView(generics.ListCreateAPIView):
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, IsAdm]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated, IsAdm]
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserUpdateView(generics.UpdateAPIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated, IsAdm]
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
