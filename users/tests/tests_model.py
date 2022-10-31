@@ -27,3 +27,12 @@ class UserModelTest(TestCase):
         received_keys = set(vars(user).keys())
 
         self.assertSetEqual(expected_keys, received_keys)
+
+    def test_creation_of_a_user(self):
+        user = baker.make("users.User")
+
+        self.assertIn("id", vars(user))
+        self.assertIn("username", vars(user))
+        self.assertIn("password", vars(user))
+        self.assertIn("department_id", vars(user))
+        self.assertIsNone(user.department_id)
