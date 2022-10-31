@@ -6,14 +6,16 @@ class Solution(models.Model):
     description = models.TextField()
     solved_at = models.DateTimeField(auto_now_add=True)
     time_taken = models.CharField(max_length=30)
-    ticket_id = models.ForeignKey(
+    ticket = models.ForeignKey(
         "tickets.Ticket",
         on_delete=models.CASCADE,
-        related_name="solution"
+        related_name="solution_found"
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
         related_name="solved_by"
     )
+
+        
 
