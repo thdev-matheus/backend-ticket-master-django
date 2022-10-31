@@ -22,3 +22,8 @@ class TicketModelTest(TestCase):
 
         self.assertSetEqual(expected_keys, received_keys)
         self.assertFalse(ticket.is_solved)
+
+    def test_create_ticket_with_wrong_urgency(self):
+        with self.assertRaises(ValidationError):
+            ticket = Ticket(description="descrição", urgency="chave_errada")
+            ticket.full_clean()
