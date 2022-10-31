@@ -42,3 +42,7 @@ class UserModelTest(TestCase):
 
         with self.assertRaises(IntegrityError):
             baker.make("users.User", username=user.username)
+
+    def test_should_not_be_possible_create_user_without_the_data(self):
+        with self.assertRaises(TypeError):
+            User.objects.create_user(**{})
