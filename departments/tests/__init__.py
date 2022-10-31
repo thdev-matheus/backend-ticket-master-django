@@ -18,3 +18,8 @@ class DepartmentModelTest(TestCase):
 
         self.assertSetEqual(expected_keys, received_keys)
         self.assertTrue(dep.is_active)
+
+    def test_max_length_name(self):
+        with self.assertRaises(ValidationError):
+            dep = Department(name="string_de_teste_com_mais_de_20_caracteres")
+            dep.full_clean()
