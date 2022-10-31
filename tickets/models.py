@@ -13,7 +13,6 @@ class Ticket(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     description = models.TextField()
     is_solved = models.BooleanField(default=False)
-    solution = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     urgency = models.CharField(
         max_length=20,
@@ -32,5 +31,5 @@ class Ticket(models.Model):
         on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name="tickets"
+        related_name="tickets",
     )
