@@ -46,3 +46,10 @@ class UserModelTest(TestCase):
     def test_should_not_be_possible_create_user_without_the_data(self):
         with self.assertRaises(TypeError):
             User.objects.create_user(**{})
+
+    def test_username_max_length(self):
+        with self.assertRaises(ValidationError):
+            user = User(
+                username="string_de_teste_com_mais_de_20_caracteres", password="1234"
+            )
+            user.full_clean()
