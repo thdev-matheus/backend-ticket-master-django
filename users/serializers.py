@@ -11,9 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
             fields = ["id","username", "department_id", "is_superuser", "password"]
             read_only_fields = ["id", "is_superuser"]
 
-    def create(self, validated_data):
-        # user = User(**validated_data)
-        # user.set_password(validated_data['password'])
-        # user.save()
-        model = self.Meta.model
-        model.create_user(**validated_data)
+
+    def create(self, validated_data:dict):
+        return User.objects.create_user(**validated_data)
