@@ -53,3 +53,8 @@ class UserModelTest(TestCase):
                 username="string_de_teste_com_mais_de_20_caracteres", password="1234"
             )
             user.full_clean()
+
+    def test_field_department_id_can_be_null(self):
+        user = baker.make("users.User")
+
+        self.assertIsNone(user.department_id)
