@@ -95,36 +95,43 @@ WSGI_APPLICATION = "_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
 # Se tiver uma chave SQLITE no .env executa o banco de dados do sqlite. Senão se tiver uma chave OPERATION executa o postgres que está no container direto do contexto local(para executar comandos de terminal direcionados ao container sem precisar entrar no container). senão aciona o banco normalmente do container. qualquer dúvida só chamar.
-if os.environ.get("SQLITE"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-elif os.environ.get("OPERATION"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("POSTGRES_DB"),
-            "USER": os.environ.get("POSTGRES_USER"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-            "HOST": "localhost",
-            "PORT": 5050,
-        }
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("POSTGRES_DB"),
-            "USER": os.environ.get("POSTGRES_USER"),
-            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-            "HOST": os.environ.get("POSTGRES_HOST"),
-            "PORT": os.environ.get("PORT"),
-        }
-    }
+# if os.environ.get("SQLITE"):
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+# elif os.environ.get("OPERATION"):
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": os.environ.get("POSTGRES_DB"),
+#             "USER": os.environ.get("POSTGRES_USER"),
+#             "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+#             "HOST": "localhost",
+#             "PORT": 5050,
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": os.environ.get("POSTGRES_DB"),
+#             "USER": os.environ.get("POSTGRES_USER"),
+#             "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+#             "HOST": os.environ.get("POSTGRES_HOST"),
+#             "PORT": os.environ.get("PORT"),
+#         }
+#     }
 
 
 # Password validation
