@@ -26,3 +26,10 @@ class CommentModelTest(TestCase):
         with self.assertRaises(ValidationError):
             comment = Comment(content="teste")
             comment.full_clean()
+
+    def test_create_comment_without_content(self):
+        comment1 = baker.make("comments.Comment")
+
+        with self.assertRaises(ValidationError):
+            comment2 = Comment(ticket=comment1.ticket, user=comment1.user)
+            comment2.full_clean()
