@@ -342,4 +342,11 @@ class UserReactivateViewTest(APITestCase):
         self.assertEqual("not_found", response.data["detail"].code)
 
     def test_reactivate_a_already_active_user(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.patch(
+            f"/api/users/{self.user_non_admin.id}/userActivate/"
+        )
+
+        self.assertEqual(401, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("error", response.data["detail"].code)
