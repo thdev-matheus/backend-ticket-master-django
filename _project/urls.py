@@ -45,5 +45,10 @@ urlpatterns = [
     path(
         "api/",
         include("departments.urls")
+    ),
+    path(
+        "api/",
+        include("tickets.urls")
     )
+
 ]
