@@ -65,7 +65,6 @@ class UserViewTest(APITestCase):
             "username": "teste",
             "password": "teste",
         }
-        # ipdb.set_trace()
 
     def setUp(self) -> None:
         login_admin = self.client.post("/api/login/", self.user_admin_data_login)
@@ -109,7 +108,18 @@ class UserViewTest(APITestCase):
     def test_creation_a_user_with_a_non_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
         response = self.client.post("/api/users/", self.test_data)
-        # ipdb.set_trace()
+
         self.assertEqual(403, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("permission_denied", response.data["detail"].code)
+
+    def test_list_all_users_with_admin_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.get("/api/users/")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("count", response.data)
+        self.assertIn("previous", response.data)
+        self.assertIn("next", response.data)
+        self.assertIn("results", response.data)
+        self.assertEqual(2, response.data["count"])
