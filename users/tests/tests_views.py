@@ -21,3 +21,12 @@ class UserLoginViewTest(APITestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertIn("token", response.data)
+
+    def test_login_with_incorrect_credentials(self):
+        response = self.client.post(
+            "/api/login/",
+            {"username": self.user_admin.username, "password": "123456789"},
+        )
+
+        self.assertEqual(400, response.status_code)
+        self.assertEqual("authorization", response.data["non_field_errors"][0].code)
