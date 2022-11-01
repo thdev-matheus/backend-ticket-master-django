@@ -242,7 +242,21 @@ class UserDeleteViewTest(APITestCase):
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_soft_delete_user_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.delete(f"/api/users/{self.user_non_admin.id}/")
+        expected_keys = {
+            "id",
+            "username",
+            "department",
+            "is_superuser",
+        }
+        received_keys = set(response.data.keys())
+        ipdb.set_trace()
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("user atualizado", response.data["username"])
+        self.assertNotIn("password", response.data)
+        self.assertSetEqual(expected_keys, received_keys)
 
     def test_soft_delete_user_that_not_exist(self):
         ...
