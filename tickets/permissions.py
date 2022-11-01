@@ -10,3 +10,10 @@ class IsOwnerOrFromDepartment(permissions.BasePermission):
             or request.user.department == ticket.department
             or request.user.is_superuser
         )
+
+class OnlyAdmCanListAll(permissions.BasePermission):
+    def has_permission(self, request:Request, view:View):
+        return(
+            request.method == "POST"
+            or request.user.is_authenticated and request.user.is_superuser
+        )
