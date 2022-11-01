@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import  ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from .serializers import CommentSerializer
 from .models import Comment
-from .permissions import IsOwnerOrFromComment
+from .permissions import IsOwnerOrFromComment, isSameDepartamentOrOwnerTicket
 from tickets.models import Ticket
 from users.models import User
 
@@ -45,7 +45,7 @@ class GetUserCommentsView(ListAPIView):
 
 class GetTicketCommentsView(ListAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [isSameDepartamentOrOwnerTicket]
     serializer_class = CommentSerializer
 
     def get_queryset(self):
