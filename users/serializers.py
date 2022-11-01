@@ -24,3 +24,9 @@ class UserPatchActivateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "is_active", "date_joined", "department"]
+
+class UserSerializerSupport(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username"]
+        read_only_fields = ["id", "username"]
