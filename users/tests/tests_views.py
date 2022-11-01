@@ -313,7 +313,23 @@ class UserReactivateViewTest(APITestCase):
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_reactivate_user_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.patch(
+            f"/api/users/{self.user_non_admin2.id}/userActivate/"
+        )
+        expected_keys = {
+            "id",
+            "username",
+            "is_active",
+            "date_joined",
+            "department",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertEqual(200, response.status_code)
+        self.assertNotIn("password", response.data)
+        self.assertTrue(response.data["is_active"])
+        self.assertSetEqual(expected_keys, received_keys)
 
     def test_reactivate_user_that_not_exist(self):
         ...
