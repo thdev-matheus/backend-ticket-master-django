@@ -105,3 +105,11 @@ class UserViewTest(APITestCase):
         self.assertEqual(401, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("not_authenticated", response.data["detail"].code)
+
+    def test_creation_a_user_with_a_non_admin_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.post("/api/users/", self.test_data)
+        # ipdb.set_trace()
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
