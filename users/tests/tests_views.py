@@ -30,3 +30,12 @@ class UserLoginViewTest(APITestCase):
 
         self.assertEqual(400, response.status_code)
         self.assertEqual("authorization", response.data["non_field_errors"][0].code)
+
+    def test_login_without_fields(self):
+        response = self.client.post("/api/login/", {})
+
+        self.assertEqual(400, response.status_code)
+        self.assertIn("username", response.data)
+        self.assertEqual("required", response.data["username"][0].code)
+        self.assertIn("password", response.data)
+        self.assertEqual("required", response.data["password"][0].code)
