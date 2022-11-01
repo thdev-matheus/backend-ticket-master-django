@@ -15,3 +15,9 @@ class UserLoginViewTest(APITestCase):
             "username": cls.user_admin.username,
             "password": "1234",
         }
+
+    def test_login_with_correct_data(self):
+        response = self.client.post("/api/login/", self.user_admin_data_login)
+
+        self.assertEqual(200, response.status_code)
+        self.assertIn("token", response.data)
