@@ -167,6 +167,33 @@ class UserDeleteViewTest(APITestCase):
         self.token_admin = f"Token {login_admin.data['token']}"
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
 
+    def test_retrieve_user_by_id_with_admin_token(self):
+        ...
+
+    def test_retrieve_user_by_id_with_non_admin_token(self):
+        ...
+
+    def test_retrieve_user_that_not_exist(self):
+        ...
+
+    def test_update_user_with_non_admin_token(self):
+        ...
+
+    def test_update_user_with_admin_token(self):
+        ...
+
+    def test_update_user_that_not_exist(self):
+        ...
+
+    def test_soft_delete_user_with_non_admin_token(self):
+        ...
+
+    def test_soft_delete_user_with_admin_token(self):
+        ...
+
+    def test_soft_delete_user_that_not_exist(self):
+        ...
+
 
 class UserReactivateViewTest(APITestCase):
     ...
