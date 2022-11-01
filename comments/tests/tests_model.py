@@ -20,3 +20,9 @@ class CommentModelTest(TestCase):
         received_fields = set(vars(comment).keys())
 
         self.assertSetEqual(expected_fields, received_fields)
+
+    def test_create_comment_whithout_user_or_ticket_relation(self):
+
+        with self.assertRaises(ValidationError):
+            comment = Comment(content="teste")
+            comment.full_clean()
