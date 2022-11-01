@@ -75,3 +75,18 @@ class UserViewTest(APITestCase):
 
         self.token_admin = f"Token {login_admin.data['token']}"
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
+
+    def test_creation_a_user_with_correct_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.post("/api/users/", self.test_data)
+        expected_keys = {
+            "id",
+            "username",
+            "department",
+            "is_superuser",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertEqual(201, response.status_code)
+        self.assertNotIn("password", response.data)
+        self.assertSetEqual(expected_keys, received_keys)
