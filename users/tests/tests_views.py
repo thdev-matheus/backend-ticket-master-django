@@ -272,8 +272,12 @@ class UserReactivateViewTest(APITestCase):
         cls.user_admin = User.objects.create_superuser(
             username="AdminUser", password="1234"
         )
+
         cls.user_non_admin = User.objects.create_user(
             username="NonAdminUser", password="1234"
+        )
+        cls.user_non_admin2 = User.objects.create_user(
+            username="NonAdminUser2", password="1234"
         )
 
         cls.user_admin_data_login = {
@@ -286,10 +290,6 @@ class UserReactivateViewTest(APITestCase):
             "password": "1234",
         }
 
-        cls.test_update_data = {
-            "username": "user atualizado",
-        }
-
     def setUp(self) -> None:
         login_admin = self.client.post("/api/login/", self.user_admin_data_login)
         login_non_admin = self.client.post(
@@ -300,10 +300,17 @@ class UserReactivateViewTest(APITestCase):
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
 
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        self.client.delete(f"/api/users/{self.user_non_admin.id}/")
+        self.client.delete(f"/api/users/{self.user_non_admin2.id}/")
 
     def test_reactivate_user_with_non_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.patch(
+            f"/api/users/{self.user_non_admin2.id}/userActivate/"
+        )
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_reactivate_user_with_admin_token(self):
         ...
