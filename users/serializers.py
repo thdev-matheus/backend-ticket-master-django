@@ -18,3 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = self.Meta.model
         instance = model.create_user(**validated_data)
         return instance
+
+
+class UserPatchActivateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "is_active", "date_joined", "department"]
