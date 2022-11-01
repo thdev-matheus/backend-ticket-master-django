@@ -224,7 +224,12 @@ class UserDeleteViewTest(APITestCase):
         self.assertSetEqual(expected_keys, received_keys)
 
     def test_update_user_that_not_exist(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.get(f"/api/users/asdfqwerqwerqwerqwerasds/")
+
+        self.assertEqual(404, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_found", response.data["detail"].code)
 
     def test_soft_delete_user_with_non_admin_token(self):
         ...
