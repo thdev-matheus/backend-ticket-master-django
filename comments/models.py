@@ -10,3 +10,6 @@ class Comment(models.Model):
     ticket = models.ForeignKey(
         "tickets.Ticket", on_delete=models.CASCADE, related_name="comments"
     )
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="comments"
+    )
