@@ -90,3 +90,12 @@ class UserViewTest(APITestCase):
         self.assertEqual(201, response.status_code)
         self.assertNotIn("password", response.data)
         self.assertSetEqual(expected_keys, received_keys)
+
+    def test_creation_a_user_without_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.post("/api/users/", {})
+        self.assertEqual(400, response.status_code)
+        self.assertIn("username", response.data)
+        self.assertEqual("required", response.data["username"][0].code)
+        self.assertIn("password", response.data)
+        self.assertEqual("required", response.data["password"][0].code)
