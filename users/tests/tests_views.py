@@ -301,3 +301,15 @@ class UserReactivateViewTest(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         self.client.delete(f"/api/users/{self.user_non_admin.id}/")
+
+    def test_reactivate_user_with_non_admin_token(self):
+        ...
+
+    def test_reactivate_user_with_admin_token(self):
+        ...
+
+    def test_reactivate_user_that_not_exist(self):
+        ...
+
+    def test_reactivate_a_already_active_user(self):
+        ...
