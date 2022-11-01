@@ -176,7 +176,7 @@ class UserDeleteViewTest(APITestCase):
             "is_superuser",
         }
         received_keys = set(response.data.keys())
-        # ipdb.set_trace()
+
         self.assertEqual(200, response.status_code)
         self.assertNotIn("password", response.data)
         self.assertSetEqual(expected_keys, received_keys)
@@ -190,7 +190,12 @@ class UserDeleteViewTest(APITestCase):
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_retrieve_user_that_not_exist(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.get(f"/api/users/asdfqwerqwerqwerqwerasds/")
+
+        self.assertEqual(404, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_found", response.data["detail"].code)
 
     def test_update_user_with_non_admin_token(self):
         ...
