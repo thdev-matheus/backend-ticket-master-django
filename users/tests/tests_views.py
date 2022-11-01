@@ -182,7 +182,12 @@ class UserDeleteViewTest(APITestCase):
         self.assertSetEqual(expected_keys, received_keys)
 
     def test_retrieve_user_by_id_with_non_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.get(f"/api/users/{self.user_non_admin.id}/")
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_retrieve_user_that_not_exist(self):
         ...
