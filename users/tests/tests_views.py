@@ -123,3 +123,11 @@ class UserViewTest(APITestCase):
         self.assertIn("next", response.data)
         self.assertIn("results", response.data)
         self.assertEqual(2, response.data["count"])
+
+    def test_list_all_users_with_a_non_admin_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.get("/api/users/")
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
