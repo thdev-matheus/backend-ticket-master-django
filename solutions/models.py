@@ -12,7 +12,8 @@ class Solution(models.Model):
         "tickets.Ticket",
         on_delete=models.CASCADE,
     )
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
+        related_name="solved_by",
     )
