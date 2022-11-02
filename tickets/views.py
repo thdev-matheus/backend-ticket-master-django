@@ -13,8 +13,6 @@ from tickets.exceptions import RedundantSolveError
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
 
-import ipdb
-
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [OnlyAdmCanListAll]
