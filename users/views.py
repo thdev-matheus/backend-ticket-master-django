@@ -37,7 +37,7 @@ class ReactivateUserView(generics.UpdateAPIView):
         raise RedundantUserActivateError
 
 
-class UserDeleteView(generics.RetrieveUpdateDestroyAPIView):
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdm]
 
@@ -51,6 +51,7 @@ class UserDeleteView(generics.RetrieveUpdateDestroyAPIView):
         if instance.is_active:
             instance.is_active = False
             instance.save()
-            data = model_to_dict(instance)
-            return Response(data, status=status.HTTP_200_OK)
+            # data = model_to_dict(instance)
+            serializer = UserPatchActivateSerializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         raise RedundantUserDeleteError
