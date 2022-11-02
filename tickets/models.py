@@ -33,3 +33,6 @@ class Ticket(models.Model):
         null=True,
         related_name="tickets",
     )
+
+    class Meta:
+        ordering = ['id']
