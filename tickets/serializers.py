@@ -9,12 +9,9 @@ class TicketSerializer(serializers.ModelSerializer):
             model = Ticket
             fields = ["id","description", "is_solved","created_at","urgency", "support_department", "user", "support"]
             read_only_fields = ["id", "created_at"]
-            depth = 1
         
-    user = UserSerializer(read_only=True)
-    support = UserSerializer(read_only=True)
 
-class TicketSerializerPatch(serializers.ModelSerializer):
+class TicketSerializerDetailed(serializers.ModelSerializer):
     class Meta:
             model = Ticket
             fields = ["id","description", "is_solved","created_at","urgency", "support_department", "user", "support"]

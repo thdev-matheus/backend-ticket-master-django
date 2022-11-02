@@ -7,7 +7,7 @@ from tickets.permissions import IsOwnerOrFromDepartment,OnlyAdmCanListAll,IsFrom
 from users.permissions import IsAdm
 
 from tickets.models import Ticket
-from tickets.serializers import TicketSerializer,TicketSerializerPatch,TicketSerializerNoDepartment
+from tickets.serializers import TicketSerializer, TicketSerializerDetailed, TicketSerializerNoDepartment
 from tickets.exceptions import RedundantSolveError
 
 from departments.models import Department
@@ -25,7 +25,7 @@ class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsOwnerOrFromDepartment]
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializerPatch
+    serializer_class = TicketSerializerDetailed
     lookup_url_kwarg = "ticket_id"
 
     def destroy(self, request, *args, **kwargs):
@@ -57,7 +57,7 @@ class ListTicketTotalsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdm]
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
+    serializer_class = TicketSerializerDetailed
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -92,7 +92,7 @@ class ListTicketsFromDepartmentView(generics.RetrieveAPIView):
 
         dpt_id = serializer.data["id"]
         tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False)
-        serializer = TicketSerializer(tickets, many=True)
+        serializer = TicketSerializerNoDepartment(tickets, many=True)
         
         return Response(serializer.data)
 
@@ -103,14 +103,18 @@ class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
 
         dpt_id = serializer.data["id"]
         tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="High")
-        if not  tickets:
-            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, urgency="Medium")
         if not tickets:
-            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, urgency="Low")
-
+            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="Average")
+        if not tickets:
+            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="Low")
+        
         if tickets:
-            tickets[0].support=request.user
-            serializer = TicketSerializerNoDepartment(tickets[0])
+            tickets = sorted(tickets, key=lambda x: x.created_at)
+            instance = Ticket.objects.get(id=tickets[0].id)
+            instance.support = request.user
+            instance.save()
+            serializer = TicketSerializerNoDepartment(instance)
             return Response(serializer.data)
+        
         dpt_name = serializer.data["name"]
-        return Response({"detail":f"No tickets to solve for the {dpt_name} department"})
+        return Response({"detail":f"No tickets left unattended for the {dpt_name} department to solve"})
