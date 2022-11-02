@@ -2,12 +2,10 @@ import uuid
 
 from django.db import models
 
-
 class UrgencyCategories(models.TextChoices):
     HIGH = "High"
     AVERAGE = "Average"
     DEFAULT = "Low"
-
 
 class Ticket(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -19,7 +17,7 @@ class Ticket(models.Model):
         choices=UrgencyCategories.choices,
         default=UrgencyCategories.DEFAULT,
     )
-    department = models.ForeignKey(
+    support_department = models.ForeignKey(
         "departments.Department",
         on_delete=models.CASCADE,
         blank=True,
@@ -33,6 +31,12 @@ class Ticket(models.Model):
         null=True,
         related_name="tickets",
     )
-
+    support = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="supported_by",
+    )
     class Meta:
         ordering = ['id']
