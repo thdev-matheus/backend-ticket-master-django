@@ -38,3 +38,5 @@ class Ticket(models.Model):
         null=True,
         related_name="supported_by",
     )
+    class Meta:
+        ordering = ['id']
