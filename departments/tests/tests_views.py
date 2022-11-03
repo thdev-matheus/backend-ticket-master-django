@@ -111,7 +111,7 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         department_response = self.client.post("/api/department/", {"name": "TI"})
         self.department = department_response.data
 
-        self.client.credentials(HTTP_AUTHORIZATION=None)
+        self.client.credentials(HTTP_AUTHORIZATION="")
 
     def test_retrieve_department_with_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
@@ -137,13 +137,18 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_retrieve_department_that_not_exist(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.get(f"/api/department/id_que_não_existe/")
-        ipdb.set_trace()
+
         self.assertEqual(404, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("not_found", response.data["detail"].code)
 
     def test_retrieve_department_whitout_token(self):
-        ...
+        response = self.client.get(f"/api/department/{self.department['id']}/")
+        ipdb.set_trace()
+
+        self.assertEqual(401, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_update_department_with_admin_token(self):
         ...
