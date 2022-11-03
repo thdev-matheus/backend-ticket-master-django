@@ -275,7 +275,22 @@ class ReactivateDepartmentViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="")
 
     def test_reactivate_department_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        self.client.delete(f"/api/department/{self.department['id']}/")
+
+        response = self.client.patch(
+            f"/api/department/{self.department['id']}/activate/"
+        )
+        expected_keys = {
+            "id",
+            "name",
+            "is_active",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertEqual(200, response.status_code)
+        self.assertSetEqual(expected_keys, received_keys)
+        self.assertTrue(response.data["is_active"])
 
     def test_reactivate_department_with_non_admin_token(self):
         ...
