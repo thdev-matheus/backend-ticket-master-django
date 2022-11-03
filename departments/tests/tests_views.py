@@ -66,4 +66,9 @@ class CreateDepartmentViewTest(APITestCase):
         self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_creation_department_without_name(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.post("/api/department/", {})
+        ipdb.set_trace()
+        self.assertEqual(400, response.status_code)
+        self.assertIn("name", response.data)
+        self.assertEqual("required", response.data["name"][0].code)
