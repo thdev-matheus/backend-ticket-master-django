@@ -109,3 +109,30 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
         department_response = self.client.post("/api/department/", {"name": "TI"})
         self.department = department_response.data
+
+    def test_retrieve_department_with_admin_token(self):
+        ...
+
+    def test_retrieve_department_with_non_admin_token(self):
+        ...
+
+    def test_retrieve_department_that_not_exist(self):
+        ...
+
+    def test_update_department_with_admin_token(self):
+        ...
+
+    def test_update_department_with_non_admin_token(self):
+        ...
+
+    def test_update_department_that_not_exist(self):
+        ...
+
+    def test_soft_delete_department_with_admin_token(self):
+        ...
+
+    def test_soft_delete_department_with_non_admin_token(self):
+        ...
+
+    def test_soft_delete_department_that_not_exist(self):
+        ...
