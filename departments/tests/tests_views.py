@@ -228,4 +228,8 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         self.assertEqual("not_found", response.data["detail"].code)
 
     def test_soft_delete_department_whitout_token(self):
-        ...
+        response = self.client.get(f"/api/department/{self.department['id']}/")
+
+        self.assertEqual(401, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_authenticated", response.data["detail"].code)
