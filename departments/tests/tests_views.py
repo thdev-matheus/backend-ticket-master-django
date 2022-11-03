@@ -167,14 +167,23 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
     def test_update_department_with_non_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
-        response = self.client.patch(f"/api/department/{self.department['id']}/")
+        response = self.client.patch(
+            f"/api/department/{self.department['id']}/", self.department_patch_data
+        )
 
         self.assertEqual(403, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_update_department_that_not_exist(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.patch(
+            f"/api/department/id_que_não_existe/", self.department_patch_data
+        )
+
+        self.assertEqual(404, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_found", response.data["detail"].code)
 
     def test_update_department_whitout_token(self):
         ...
