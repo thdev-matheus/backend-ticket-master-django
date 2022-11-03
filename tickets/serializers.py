@@ -31,5 +31,14 @@ class TicketSerializerNoDepartment(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     support = UserSerializerSupport(read_only=True)
 
+class TicketSerializerNoSupport(serializers.ModelSerializer):
+    class Meta:
+            model = Ticket
+            fields = ["id","description", "is_solved","created_at","urgency", "user"]
+            read_only_fields = ["id", "created_at"]
+            depth = 1
+        
+    user = UserSerializer(read_only=True)
+
             
         
