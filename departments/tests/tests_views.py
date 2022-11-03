@@ -236,6 +236,7 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
     def test_soft_delete_department_already_inactive(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        self.client.delete(f"/api/department/{self.department['id']}/")
         response = self.client.delete(f"/api/department/{self.department['id']}/")
 
         self.assertEqual(401, response.status_code)
