@@ -144,14 +144,26 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
     def test_retrieve_department_whitout_token(self):
         response = self.client.get(f"/api/department/{self.department['id']}/")
-        ipdb.set_trace()
 
         self.assertEqual(401, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_update_department_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.patch(
+            f"/api/department/{self.department['id']}/", self.department_patch_data
+        )
+        expected_keys = {
+            "id",
+            "name",
+            "is_active",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertSetEqual(expected_keys, received_keys)
+        self.assertTrue(response.data["is_active"])
+        self.assertEqual("Nome Atualizado", response.data["name"])
 
     def test_update_department_with_non_admin_token(self):
         ...
