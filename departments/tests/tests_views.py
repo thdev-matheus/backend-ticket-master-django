@@ -201,7 +201,6 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.delete(f"/api/department/{self.department['id']}/")
         expected_keys = {
-            "id",
             "name",
             "is_active",
         }
@@ -291,7 +290,6 @@ class ReactivateDepartmentViewTest(APITestCase):
             f"/api/department/{self.department['id']}/activate/"
         )
         expected_keys = {
-            "id",
             "name",
             "is_active",
         }
