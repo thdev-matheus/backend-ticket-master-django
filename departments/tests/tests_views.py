@@ -51,7 +51,12 @@ class CreateDepartmentViewTest(APITestCase):
         self.assertTrue(response.data["is_active"])
 
     def test_creation_department_with_non_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.post("/api/department/", self.department_data)
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_creation_department_without_token(self):
         ...
