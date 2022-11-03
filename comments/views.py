@@ -7,11 +7,11 @@ from .permissions import IsOwnerOrFromComment, isSameDepartamentOrOwnerTicket
 from tickets.models import Ticket
 from users.models import User
 
-class ListAllCommentsView(ListAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    queryset = Comment.objects.all()  
-    serializer_class = CommentSerializer
+# class ListAllCommentsView(ListAPIView):
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     queryset = Comment.objects.all()  
+#     serializer_class = CommentSerializer
 
 
 class CreateCommentView(CreateAPIView):
