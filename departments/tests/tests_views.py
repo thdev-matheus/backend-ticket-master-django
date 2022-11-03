@@ -47,6 +47,7 @@ class CreateDepartmentViewTest(APITestCase):
         }
         received_keys = set(response.data.keys())
 
+        self.assertEqual(201, response.status_code)
         self.assertSetEqual(expected_keys, received_keys)
         self.assertTrue(response.data["is_active"])
 
@@ -123,6 +124,7 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         }
         received_keys = set(response.data.keys())
 
+        self.assertEqual(200, response.status_code)
         self.assertSetEqual(expected_keys, received_keys)
         self.assertTrue(response.data["is_active"])
 
@@ -161,6 +163,7 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         }
         received_keys = set(response.data.keys())
 
+        self.assertEqual(200, response.status_code)
         self.assertSetEqual(expected_keys, received_keys)
         self.assertTrue(response.data["is_active"])
         self.assertEqual("Nome Atualizado", response.data["name"])
@@ -195,7 +198,18 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_soft_delete_department_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.delete(f"/api/department/{self.department['id']}/")
+        expected_keys = {
+            "id",
+            "name",
+            "is_active",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertEqual(200, response.status_code)
+        self.assertSetEqual(expected_keys, received_keys)
+        self.assertFalse(response.data["is_active"])
 
     def test_soft_delete_department_with_non_admin_token(self):
         ...
