@@ -54,4 +54,8 @@ urlpatterns = [
         "api/",
         include("comments.urls")
     ),
+    path(
+        "api/",
+        include("solutions.urls")
+    )
 ]
