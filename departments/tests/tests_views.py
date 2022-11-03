@@ -135,7 +135,12 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_retrieve_department_that_not_exist(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.get(f"/api/department/id_que_não_existe/")
+        ipdb.set_trace()
+        self.assertEqual(404, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_found", response.data["detail"].code)
 
     def test_retrieve_department_whitout_token(self):
         ...
