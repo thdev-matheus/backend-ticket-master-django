@@ -319,7 +319,14 @@ class ReactivateDepartmentViewTest(APITestCase):
         self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_reactivate_department_that_not_exist(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        self.client.delete(f"/api/department/{self.department['id']}/")
+
+        response = self.client.patch("/api/department/id_que_não_existe/activate/")
+
+        self.assertEqual(404, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_found", response.data["detail"].code)
 
     def test_reactivate_department_already_active(self):
         ...
