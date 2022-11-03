@@ -25,7 +25,7 @@ class TicketViewTest(APITestCase):
         }
         
         cls.department = Department.objects.create(name="departamento")        
-        cls.ticket = baker.make('tickets.Ticket', department=cls.department)
+        cls.ticket = baker.make('tickets.Ticket', support_department=cls.department)
 
     def setUp(self) -> None:
         login_admin = self.client.post("/api/login/", self.user_admin_data_login)
@@ -42,7 +42,7 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
         response = self.client.post("/api/tickets/", {"description":"descrição"})
-        expected_keys = {"id","description","is_solved","created_at","urgency","department","user"}
+        expected_keys = {"id","description","is_solved","created_at","urgency","support_department","support","user"}
         received_keys = set(response.data.keys())
 
         self.assertEqual(201, response.status_code)
@@ -98,7 +98,7 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.get(f"/api/tickets/{self.ticket.id}/")
-        expected_keys = {"id","description","is_solved","created_at","urgency","department","user"}
+        expected_keys = {"id","description","is_solved","created_at","urgency","support_department","support","user"}
         received_keys = set(response.data.keys())
 
         self.assertEqual(200, response.status_code)
@@ -144,7 +144,7 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.delete(f"/api/tickets/{self.ticket.id}/")
-        expected_keys = {"description","is_solved","urgency","department","user"}
+        expected_keys = {"description","is_solved","urgency","support_department","support","user"}
         received_keys = set(response.data.keys())
 
         self.assertEqual(200, response.status_code)
@@ -217,6 +217,29 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
         response = self.client.get(f"/api/tickets/department/{self.department.id}/newest/")
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
+        
+    def test_retrieve_ticket_and_add_support(self):
+        """
+        Lista o ticket mais urgente e associa o owner do Token ao campo "support_user"
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.patch(f"/api/tickets/{self.ticket.id}/")
+
+        expected_keys = {"description","is_solved","urgency","support"}
+        received_keys = set(response.data.keys())
+        self.assertEqual(200, response.status_code)
+        self.assertSetEqual(expected_keys, received_keys)
+    
+    def test_retrieve_ticket_and_add_support_without_permission(self):
+        """
+        Lista o ticket mais urgente e associa o owner do Token ao campo "support_user" sem permissão
+        """
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.patch(f"/api/tickets/{self.ticket.id}/")
 
         self.assertEqual(403, response.status_code)
         self.assertIn("detail", response.data)
