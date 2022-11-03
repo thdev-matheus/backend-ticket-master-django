@@ -221,18 +221,26 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
     def test_soft_delete_department_that_not_exist(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        response = self.client.get(f"/api/department/id_que_não_existe/")
+        response = self.client.delete(f"/api/department/id_que_não_existe/")
 
         self.assertEqual(404, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("not_found", response.data["detail"].code)
 
     def test_soft_delete_department_whitout_token(self):
-        response = self.client.get(f"/api/department/{self.department['id']}/")
+        response = self.client.delete(f"/api/department/{self.department['id']}/")
 
         self.assertEqual(401, response.status_code)
         self.assertIn("detail", response.data)
         self.assertEqual("not_authenticated", response.data["detail"].code)
+
+    def test_soft_delete_department_already_inactive(self):
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.delete(f"/api/department/{self.department['id']}/")
+
+        self.assertEqual(401, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("error", response.data["detail"].code)
 
 
 class ReactivateDepartmentViewTest(APITestCase):
