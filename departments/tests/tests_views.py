@@ -273,3 +273,18 @@ class ReactivateDepartmentViewTest(APITestCase):
         self.department = department_response.data
 
         self.client.credentials(HTTP_AUTHORIZATION="")
+
+    def test_reactivate_department_with_admin_token(self):
+        ...
+
+    def test_reactivate_department_with_non_admin_token(self):
+        ...
+
+    def test_reactivate_department_without_token(self):
+        ...
+
+    def test_reactivate_department_that_not_exist(self):
+        ...
+
+    def test_reactivate_department_already_active(self):
+        ...
