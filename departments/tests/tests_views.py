@@ -116,10 +116,23 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_retrieve_department_with_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.get(f"/api/department/{self.department['id']}/")
-        ipdb.set_trace()
+        expected_keys = {
+            "id",
+            "name",
+            "is_active",
+        }
+        received_keys = set(response.data.keys())
+
+        self.assertSetEqual(expected_keys, received_keys)
+        self.assertTrue(response.data["is_active"])
 
     def test_retrieve_department_with_non_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
+        response = self.client.get(f"/api/department/{self.department['id']}/")
+
+        self.assertEqual(403, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_retrieve_department_that_not_exist(self):
         ...
