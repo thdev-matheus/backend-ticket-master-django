@@ -68,7 +68,7 @@ class CreateDepartmentViewTest(APITestCase):
     def test_creation_department_without_name(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.post("/api/department/", {})
-        ipdb.set_trace()
+
         self.assertEqual(400, response.status_code)
         self.assertIn("name", response.data)
         self.assertEqual("required", response.data["name"][0].code)
@@ -107,16 +107,24 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         )
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
 
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         department_response = self.client.post("/api/department/", {"name": "TI"})
         self.department = department_response.data
 
+        self.client.credentials(HTTP_AUTHORIZATION=None)
+
     def test_retrieve_department_with_admin_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        response = self.client.get(f"/api/department/{self.department['id']}/")
+        ipdb.set_trace()
 
     def test_retrieve_department_with_non_admin_token(self):
         ...
 
     def test_retrieve_department_that_not_exist(self):
+        ...
+
+    def test_retrieve_department_whitout_token(self):
         ...
 
     def test_update_department_with_admin_token(self):
@@ -128,6 +136,9 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_update_department_that_not_exist(self):
         ...
 
+    def test_update_department_whitout_token(self):
+        ...
+
     def test_soft_delete_department_with_admin_token(self):
         ...
 
@@ -135,4 +146,7 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         ...
 
     def test_soft_delete_department_that_not_exist(self):
+        ...
+
+    def test_soft_delete_department_whitout_token(self):
         ...
