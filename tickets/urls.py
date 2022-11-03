@@ -7,5 +7,6 @@ urlpatterns = [
     path("tickets/<ticket_id>/", views.TicketDetailedView.as_view()),
     path("summary/tickets/", views.ListTicketTotalsView.as_view()),
     path("tickets/department/<department_id>/", views.ListTicketsFromDepartmentView.as_view()),
-    path("tickets/department/<department_id>/newest/", views.ListMostUrgentTicketView.as_view())
+    path("tickets/department/<department_id>/newest/", views.ListMostUrgentTicketView.as_view()),
+    path("tickets/user/<user_id>/", views.ListTicketsFromUserView.as_view()),
 ]
