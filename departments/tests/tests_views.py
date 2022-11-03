@@ -306,7 +306,17 @@ class ReactivateDepartmentViewTest(APITestCase):
         self.assertEqual("permission_denied", response.data["detail"].code)
 
     def test_reactivate_department_without_token(self):
-        ...
+        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
+        self.client.delete(f"/api/department/{self.department['id']}/")
+
+        self.client.credentials(HTTP_AUTHORIZATION="")
+        response = self.client.patch(
+            f"/api/department/{self.department['id']}/activate/"
+        )
+
+        self.assertEqual(401, response.status_code)
+        self.assertIn("detail", response.data)
+        self.assertEqual("not_authenticated", response.data["detail"].code)
 
     def test_reactivate_department_that_not_exist(self):
         ...
