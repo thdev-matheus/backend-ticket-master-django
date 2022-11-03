@@ -1,6 +1,6 @@
 import ipdb
-from model_bakery import baker
 from rest_framework.test import APITestCase
+
 from users.models import User
 
 
@@ -248,7 +248,8 @@ class UserDeleteViewTest(APITestCase):
             "id",
             "username",
             "department",
-            "is_superuser",
+            "is_active",
+            "date_joined",
         }
         received_keys = set(response.data.keys())
 
