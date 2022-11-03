@@ -12,6 +12,7 @@ from tickets.exceptions import RedundantSolveError
 
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
+from users.models import User
 
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -116,3 +117,13 @@ class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
         
         dpt_name = serializer.data["name"]
         return Response({"detail":f"No tickets left unattended for the {dpt_name} department to solve"})
+    
+class ListTicketsFromUserView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsOwnerOrFromDepartment]
+    serializer_class = TicketSerializer
+
+    def get_queryset(self):
+        user_obj = User.objects.get(id=self.kwargs.get('user_id'))
+        queryset = Ticket.objects.filter(user=user_obj)      
+        return queryset

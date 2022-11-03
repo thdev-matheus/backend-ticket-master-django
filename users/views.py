@@ -8,6 +8,9 @@ from users.exceptions import RedundantUserActivateError, RedundantUserDeleteErro
 from users.models import User
 from users.permissions import IsAdm
 from users.serializers import UserPatchActivateSerializer, UserSerializer
+import datetime as dt
+from django.utils import timezone
+
 
 
 class UserView(generics.ListCreateAPIView):
@@ -55,3 +58,12 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
             serializer = UserPatchActivateSerializer(instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
         raise RedundantUserDeleteError
+    
+class ListFromDateOlderToNewer(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdm]
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all().order_by('date_joined')
+        return queryset
