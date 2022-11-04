@@ -41,7 +41,7 @@ class TicketViewTest(APITestCase):
         Criar ticket com os dados corretos.
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
-        response = self.client.post("/api/tickets/", {"description":"descrição", "user":"test"})
+        response = self.client.post("/api/tickets/", {"description":"descrição"})
         expected_keys = {"id","description","is_solved","created_at","urgency","status","support_department","support","user"}
         received_keys = set(response.data.keys())
 

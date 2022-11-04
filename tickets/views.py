@@ -19,14 +19,15 @@ import ipdb
 
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [OnlyAdmCanListAll]
+    permission_classes = [IsAuthenticated,OnlyAdmCanListAll]
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
     def perform_create(self, serializer):
-        serializer.save()
-    
+        serializer.save(user=self.request.user)
+
     def create(self, request, *args, **kwargs):
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
