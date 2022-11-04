@@ -72,3 +72,6 @@ class SolutionsViewsTest(APITestCase):
             "/api/login/", self.user_non_admin3_data_login
         )
         self.token_non_admin3 = f"Token {login_non_admin3.data['token']}"
+
+    def test_():
+        ...
