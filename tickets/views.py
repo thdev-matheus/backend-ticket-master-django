@@ -2,17 +2,20 @@ from django.forms import model_to_dict
 from rest_framework import generics
 from rest_framework.views import Response, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from tickets.permissions import IsOwnerOrFromDepartment,OnlyAdmCanListAll,IsFromDepartment
 from users.permissions import IsAdm
 
 from tickets.models import Ticket
-from tickets.serializers import TicketSerializer, TicketSerializerDetailed, TicketSerializerNoDepartment
-from tickets.exceptions import RedundantSolveError
+from tickets.serializers import TicketSerializer, TicketSerializerDetailed, TicketSerializerNoDepartment, TicketSerializerNoSupport
+from tickets.exceptions import RedundantSolveError, NoTicketsError, UnathorizedListingError, NoTicketsToSolveError
 
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
 from users.models import User
+
+import ipdb
 
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -120,10 +123,53 @@ class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
     
 class ListTicketsFromUserView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsOwnerOrFromDepartment]
-    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrFromDepartment]
+    serializer_class = TicketSerializerDetailed
 
     def get_queryset(self):
         user_obj = User.objects.get(id=self.kwargs.get('user_id'))
-        queryset = Ticket.objects.filter(user=user_obj)      
+        queryset = Ticket.objects.filter(user=user_obj)
+        
+        if not queryset:
+            raise NoTicketsError    
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if request.user != queryset[0].user and not request.user.is_superuser:
+            raise UnathorizedListingError
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+class ListTicketFromSupportUserView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = TicketSerializerNoSupport
+
+    def get_queryset(self):
+        user_obj = User.objects.get(id=self.kwargs.get('support_user_id'))
+        queryset = Ticket.objects.filter(support=user_obj, is_solved=False)
+        
+        if not queryset:
+            raise NoTicketsToSolveError      
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        if request.user != queryset[0].support and not request.user.is_superuser:
+            raise UnathorizedListingError
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

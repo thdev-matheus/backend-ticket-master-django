@@ -9,4 +9,5 @@ urlpatterns = [
     path("tickets/department/<department_id>/", views.ListTicketsFromDepartmentView.as_view()),
     path("tickets/department/<department_id>/newest/", views.ListMostUrgentTicketView.as_view()),
     path("tickets/user/<user_id>/", views.ListTicketsFromUserView.as_view()),
+    path("tickets/support_user/<support_user_id>/", views.ListTicketFromSupportUserView.as_view()),
 ]
