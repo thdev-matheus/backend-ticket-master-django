@@ -41,7 +41,8 @@ class SolutionsViewsTest(APITestCase):
             "tickets.Ticket",
             urgency=UrgencyCategories.AVERAGE,
             user=cls.user_non_admin2,
-            support_department=cls.department
+            support_department=cls.department,
+            is_solved=True
         )
         cls.solution = baker.make(
             "solutions.Solution",

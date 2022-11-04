@@ -85,7 +85,7 @@ class ListSolutionView(SerializerMapping, generics.RetrieveAPIView):
     lookup_url_kwarg = "solution_id"
 
     def retrieve(self, request, *args, **kwargs):
-
+        
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
@@ -143,7 +143,12 @@ class ListSolutionFromTicketView(generics.RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        solution = Solution.objects.get(ticket=instance)
-        serializer = SolutionSerializerDetailedNoSupport(solution)
-
-        return Response(serializer.data)
+        response = ""
+        if not instance.is_solved:
+            response = {"detail":"This ticket isn't solved"}
+        else:
+            solution = Solution.objects.get(ticket=instance)
+            serializer = SolutionSerializerDetailedNoSupport(solution)
+            response = serializer.data
+        
+        return Response(response)
