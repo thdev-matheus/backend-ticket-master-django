@@ -32,8 +32,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 # descomentar quando colocar em produção
-# ALLOWED_HOSTS = ["url_do_app_no_deploy", "localhost"]
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ticket-master-g06.herokuapp.com", "localhost"]
+# ALLOWED_HOSTS = []
 
 
 # Application definition
