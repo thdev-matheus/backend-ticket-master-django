@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from users.models import User
 from model_bakery import baker
 from departments.models import Department
-
+import ipdb
 
 class TicketViewTest(APITestCase):
     @classmethod
@@ -41,7 +41,7 @@ class TicketViewTest(APITestCase):
         Criar ticket com os dados corretos.
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
-        response = self.client.post("/api/tickets/", {"description":"descrição"})
+        response = self.client.post("/api/tickets/", {"description":"descrição", "user":"test"})
         expected_keys = {"id","description","is_solved","created_at","urgency","status","support_department","support","user"}
         received_keys = set(response.data.keys())
 
