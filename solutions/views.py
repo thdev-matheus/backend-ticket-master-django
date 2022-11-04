@@ -59,34 +59,6 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
              serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    # def create(self, request, *args, **kwargs):
-    #     request.data["user"] = request.user.id
-
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     ticket_id = request.data["ticket"]
-    #     ticket = Ticket.objects.get(id=ticket_id)
-
-    #     if (
-    #         request.user != ticket.support
-    #         and request.user != ticket.user
-    #         and not request.user.is_superuser
-    #     ):
-    #         raise UnauthorizedUserCreateSolutionError
-    #     self.perform_create(serializer)
-
-    #     ticket.is_solved = True
-    #     ticket.save()
-
-    #     headers = self.get_success_headers(serializer.data)
-    #     solution = Solution.objects.get(id=serializer.data["id"])
-
-    #     serializer = SolutionSerializerDetailedNoSupport(solution)
-    #     return Response(
-    #         serializer.data, status=status.HTTP_201_CREATED, headers=headers
-    #     )
-
     def list(self, request, *args, **kwargs):
         if not request.user.is_superuser:
             raise UnauthorizedUserListAllSolutionsError

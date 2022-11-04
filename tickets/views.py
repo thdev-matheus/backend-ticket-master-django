@@ -23,9 +23,10 @@ class ListCreateTicketsView(generics.ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
+    def perform_create(self, serializer):
+        serializer.save()
+    
     def create(self, request, *args, **kwargs):
-        request.data["user"]=request.user.id
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
