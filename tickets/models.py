@@ -2,10 +2,12 @@ import uuid
 
 from django.db import models
 
+
 class UrgencyCategories(models.TextChoices):
     HIGH = "High"
     AVERAGE = "Average"
     DEFAULT = "Low"
+
 
 class Ticket(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -38,5 +40,6 @@ class Ticket(models.Model):
         null=True,
         related_name="supported_by",
     )
+
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]

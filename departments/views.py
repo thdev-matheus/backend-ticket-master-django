@@ -39,6 +39,7 @@ class ReactivateDepartmentView(generics.UpdateAPIView):
     permission_classes = [IsAdm]
     queryset = Department.objects.all()
     lookup_url_kwarg = "department_id"
+    serializer_class = DepartmentSerializer
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -1,22 +1,27 @@
+import ipdb
 from rest_framework import generics
-from rest_framework.views import Response, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
-import ipdb
-
-from solutions.models import Solution
-from solutions.serializers import SolutionSerializer,SolutionSerializerDetailedNoSupport, SolutionSerializerDetailed
-from solutions.exceptions import UnauthorizedUserCreateSolutionError,UnauthorizedUserListSolutionError, UnauthorizedUserListAllSolutionsError
-from solutions.permissions import IsAdmOrFromTicketDepartmentOrOwner
-
-from tickets.models import Ticket
-from tickets.serializers import TicketSerializerDetailed
+from rest_framework.views import Response, status
 
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
-
+from solutions.exceptions import (
+    UnauthorizedUserCreateSolutionError,
+    UnauthorizedUserListAllSolutionsError,
+    UnauthorizedUserListSolutionError,
+)
+from solutions.models import Solution
+from solutions.permissions import IsAdmOrFromTicketDepartmentOrOwner
+from solutions.serializers import (
+    SolutionSerializer,
+    SolutionSerializerDetailed,
+    SolutionSerializerDetailedNoSupport,
+)
+from tickets.models import Ticket
+from tickets.serializers import TicketSerializerDetailed
 from utils.mixins import SerializerMapping
+
 
 class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -34,9 +39,13 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         ticket_id = request.data["ticket"]
-        ticket =  Ticket.objects.get(id=ticket_id)
+        ticket = Ticket.objects.get(id=ticket_id)
 
-        if request.user != ticket.support and request.user != ticket.user and not request.user.is_superuser:
+        if (
+            request.user != ticket.support
+            and request.user != ticket.user
+            and not request.user.is_superuser
+        ):
             raise UnauthorizedUserCreateSolutionError
         self.perform_create(serializer)
 
@@ -44,10 +53,12 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
         ticket.save()
 
         headers = self.get_success_headers(serializer.data)
-        solution = Solution.objects.get(id = serializer.data["id"])
-        
+        solution = Solution.objects.get(id=serializer.data["id"])
+
         serializer = SolutionSerializerDetailedNoSupport(solution)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_superuser:
@@ -63,7 +74,8 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-class ListSolutionView(SerializerMapping,generics.RetrieveAPIView):
+
+class ListSolutionView(SerializerMapping, generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Solution.objects.all()
@@ -72,7 +84,7 @@ class ListSolutionView(SerializerMapping,generics.RetrieveAPIView):
         "POST": SolutionSerializer,
     }
     lookup_url_kwarg = "solution_id"
-    
+
     def retrieve(self, request, *args, **kwargs):
 
         instance = self.get_object()
@@ -80,16 +92,21 @@ class ListSolutionView(SerializerMapping,generics.RetrieveAPIView):
 
         department_id = instance.ticket.support_department.id
         ticket_owner = instance.ticket.user
-        
+
         def is_not_from_dept():
             if not request.user.department:
                 return True
             return department_id != request.user.department.id
 
-        if not request.user.is_superuser and ticket_owner != request.user and is_not_from_dept():
+        if (
+            not request.user.is_superuser
+            and ticket_owner != request.user
+            and is_not_from_dept()
+        ):
             raise UnauthorizedUserListSolutionError
 
         return Response(serializer.data)
+
 
 class ListAllSolutionFromDepartmentView(generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
@@ -110,10 +127,11 @@ class ListAllSolutionFromDepartmentView(generics.RetrieveAPIView):
             raise UnauthorizedUserListSolutionError
 
         serializer = self.get_serializer(instance)
-        solutions = Solution.objects.filter(ticket__support_department = instance)
+        solutions = Solution.objects.filter(ticket__support_department=instance)
         serializer = SolutionSerializerDetailedNoSupport(solutions, many=True)
 
         return Response(serializer.data)
+
 
 class ListSolutionFromTicketView(generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
@@ -121,12 +139,12 @@ class ListSolutionFromTicketView(generics.RetrieveAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerDetailed
     lookup_url_kwarg = "ticket_id"
-   
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        solution = Solution.objects.get(ticket = instance)
+        solution = Solution.objects.get(ticket=instance)
         serializer = SolutionSerializerDetailedNoSupport(solution)
 
         return Response(serializer.data)
