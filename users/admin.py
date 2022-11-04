@@ -5,7 +5,10 @@ from .models import User
 
 
 class CustomUser(UserAdmin):
-    readonly_fields = ("date_joined", "last_login")
+    readonly_fields = (
+        "date_joined",
+        "last_login",
+    )
 
     fieldsets = (
         ("Credentials", {"fields": ("username", "password")}),
