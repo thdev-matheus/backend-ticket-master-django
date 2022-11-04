@@ -11,7 +11,7 @@ class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Solution
         fields = ["id", "description", "solved_at", "time_taken", "ticket", "user"]
-        read_only_fields = ["id", "solved_at"]
+        read_only_fields = ["id", "solved_at", "user"]
 
     time_taken = serializers.SerializerMethodField()
 
