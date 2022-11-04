@@ -15,8 +15,8 @@ class IsOwnerOrFromDepartment(permissions.BasePermission):
 class OnlyAdmCanListAll(permissions.BasePermission):
     def has_permission(self, request:Request, view:View):
         return(
-            request.method == "POST" and request.user.is_authenticated
-            or request.user.is_authenticated and request.user.is_superuser
+            request.method == "POST" 
+            or request.user.is_superuser
         )
 
 class IsFromDepartment(permissions.BasePermission):
