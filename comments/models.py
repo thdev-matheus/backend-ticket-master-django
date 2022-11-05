@@ -8,8 +8,12 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     ticket = models.ForeignKey(
-        "tickets.Ticket", on_delete=models.CASCADE, related_name="comments"
+        "tickets.Ticket",
+        on_delete=models.CASCADE,
+        related_name="comments",
     )
     user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="comments"
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="comments",
     )

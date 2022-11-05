@@ -1,25 +1,35 @@
-from django.forms import model_to_dict
-from rest_framework import generics
-from rest_framework.views import Response, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-
-from tickets.permissions import IsOwnerOrFromDepartment,OnlyAdmCanListAll,IsFromDepartment
-from users.permissions import IsAdm
-
-from tickets.models import Ticket
-from tickets.serializers import TicketSerializer, TicketSerializerDetailed, TicketSerializerNoDepartment, TicketSerializerNoSupport
-from tickets.exceptions import RedundantSolveError, NoTicketsError, UnathorizedListingError, NoTicketsToSolveError
-
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
+from django.forms import model_to_dict
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import Response, status
+from tickets.exceptions import (
+    NoTicketsError,
+    NoTicketsToSolveError,
+    RedundantSolveError,
+    UnathorizedListingError,
+)
+from tickets.models import Ticket
+from tickets.permissions import (
+    IsFromDepartment,
+    IsOwnerOrFromDepartment,
+    OnlyAdmCanListAll,
+)
+from tickets.serializers import (
+    TicketSerializer,
+    TicketSerializerDetailed,
+    TicketSerializerNoDepartment,
+    TicketSerializerNoSupport,
+)
 from users.models import User
+from users.permissions import IsAdm
 
-import ipdb
 
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated,OnlyAdmCanListAll]
+    permission_classes = [IsAuthenticated, OnlyAdmCanListAll]
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
@@ -32,7 +42,10 @@ class ListCreateTicketsView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
 
 class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
@@ -43,16 +56,16 @@ class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        
+
         if not instance.is_solved:
             instance.is_solved = True
             instance.save()
-            data=model_to_dict(instance)
-            return Response(data,status=status.HTTP_200_OK)
+            data = model_to_dict(instance)
+            return Response(data, status=status.HTTP_200_OK)
         raise RedundantSolveError
 
     def update(self, request, *args, **kwargs):
-        
+
         instance = self.get_object()
         instance.support = request.user
         instance.save()
@@ -61,10 +74,10 @@ class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
             "description": raw_data["description"],
             "is_solved": raw_data["is_solved"],
             "urgency": raw_data["urgency"],
-            "support": {"id":request.user.id, "name":request.user.username}
+            "support": {"id": request.user.id, "name": request.user.username},
         }
-        return Response(data,status=status.HTTP_200_OK)
-        
+        return Response(data, status=status.HTTP_200_OK)
+
 
 class ListTicketTotalsView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
@@ -77,20 +90,22 @@ class ListTicketTotalsView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
 
         all_depts = Department.objects.all()
-        dpts_data = [] 
+        dpts_data = []
         for dept in all_depts:
-            data = {
-                "department_name" : dept.name,
-                "total_open_tickets": 0
-            }
+            data = {"department_name": dept.name, "total_open_tickets": 0}
             dpts_data.append(data)
 
         for ticket in serializer.data:
-            for department in  dpts_data:
-                if department["department_name"] == str(ticket["support_department"]["name"]) and not ticket["is_solved"]:
+            for department in dpts_data:
+                if (
+                    department["department_name"]
+                    == str(ticket["support_department"]["name"])
+                    and not ticket["is_solved"]
+                ):
                     department["total_open_tickets"] += 1
 
         return Response(dpts_data)
+
 
 class ListTicketsFromDepartmentView(generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
@@ -104,10 +119,13 @@ class ListTicketsFromDepartmentView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
 
         dpt_id = serializer.data["id"]
-        tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False)
+        tickets = Ticket.objects.all().filter(
+            support_department=dpt_id, is_solved=False
+        )
         serializer = TicketSerializerNoDepartment(tickets, many=True)
-        
+
         return Response(serializer.data)
+
 
 class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
     def retrieve(self, request, *args, **kwargs):
@@ -115,12 +133,27 @@ class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
         serializer = self.get_serializer(instance)
 
         dpt_id = serializer.data["id"]
-        tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="High")
+        tickets = Ticket.objects.all().filter(
+            support_department=dpt_id,
+            is_solved=False,
+            support__isnull=True,
+            urgency="High",
+        )
         if not tickets:
-            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="Average")
+            tickets = Ticket.objects.all().filter(
+                support_department=dpt_id,
+                is_solved=False,
+                support__isnull=True,
+                urgency="Average",
+            )
         if not tickets:
-            tickets = Ticket.objects.all().filter(support_department = dpt_id, is_solved = False, support__isnull=True, urgency="Low")
-        
+            tickets = Ticket.objects.all().filter(
+                support_department=dpt_id,
+                is_solved=False,
+                support__isnull=True,
+                urgency="Low",
+            )
+
         if tickets:
             tickets = sorted(tickets, key=lambda x: x.created_at)
             instance = Ticket.objects.get(id=tickets[0].id)
@@ -128,21 +161,26 @@ class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
             instance.save()
             serializer = TicketSerializerNoDepartment(instance)
             return Response(serializer.data)
-        
+
         dpt_name = serializer.data["name"]
-        return Response({"detail":f"No tickets left unattended for the {dpt_name} department to solve"})
-    
+        return Response(
+            {
+                "detail": f"No tickets left unattended for the {dpt_name} department to solve"
+            }
+        )
+
+
 class ListTicketsFromUserView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrFromDepartment]
     serializer_class = TicketSerializerDetailed
 
     def get_queryset(self):
-        user_obj = User.objects.get(id=self.kwargs.get('user_id'))
+        user_obj = User.objects.get(id=self.kwargs.get("user_id"))
         queryset = Ticket.objects.filter(user=user_obj)
-        
+
         if not queryset:
-            raise NoTicketsError    
+            raise NoTicketsError
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -158,22 +196,23 @@ class ListTicketsFromUserView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+
 class ListTicketFromSupportUserView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = TicketSerializerNoSupport
 
     def get_queryset(self):
-        user_obj = User.objects.get(id=self.kwargs.get('support_user_id'))
+        user_obj = User.objects.get(id=self.kwargs.get("support_user_id"))
         queryset = Ticket.objects.filter(support=user_obj, is_solved=False)
-        
+
         if not queryset:
-            raise NoTicketsToSolveError      
+            raise NoTicketsToSolveError
         return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        
+
         if request.user != queryset[0].support and not request.user.is_superuser:
             raise UnathorizedListingError
 

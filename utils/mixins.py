@@ -1,5 +1,7 @@
 import math
+
 from tickets.models import Ticket
+
 
 class SerializerMapping:
     serializer_map = None
@@ -17,6 +19,7 @@ def get_ticket_status(self, obj):
     if obj.support and obj.is_solved:
         status = "Closed"
     return status
+
 
 def solution_get_time_taken(self, obj):
     ticket = Ticket.objects.get(id=obj.ticket.id)
