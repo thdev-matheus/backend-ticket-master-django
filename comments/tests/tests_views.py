@@ -1,10 +1,8 @@
+from departments.models import Department
 from rest_framework.test import APITestCase
 from rest_framework.views import status
-from users.models import User
 from tickets.models import Ticket
-from departments.models import Department
-import ipdb
-from django.forms import model_to_dict
+from users.models import User
 
 
 class CommentsCreateView(APITestCase):
@@ -47,9 +45,7 @@ class CommentsCreateView(APITestCase):
             "user": cls.user,
         }
 
-        cls.new_comment_data = {
-            "content": "User is out - Comment edit"
-        }
+        cls.new_comment_data = {"content": "User is out - Comment edit"}
 
     def test_create_comment(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login)
@@ -134,7 +130,7 @@ class CommentsCreateView(APITestCase):
         result_status_code = comment_data.status_code
 
         self.assertEqual(expected_status_code, result_status_code)
-    
+
     def test_list_a_exist_comment_with_a_owner_token(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login)
         user_token = f"Token {response_user_login.data['token']}"
@@ -148,7 +144,7 @@ class CommentsCreateView(APITestCase):
         result_status_code = comment_data.status_code
 
         self.assertEqual(expected_status_code, result_status_code)
-    
+
     def test_list_a_exist_comment_without_owner_token(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login2)
         user_token = f"Token {response_user_login.data['token']}"
@@ -168,7 +164,6 @@ class CommentsCreateView(APITestCase):
 
         self.assertEqual(expected_status_code, result_status_code)
 
-
     def test_edit_a_exist_comment(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login2)
         user_token = f"Token {response_user_login.data['token']}"
@@ -177,7 +172,9 @@ class CommentsCreateView(APITestCase):
         response = self.client.post(self.register_url, self.comment_data)
 
         comment_id = response.data["id"]
-        comment_response = self.client.patch(f"/api/comment/{comment_id}/", self.new_comment_data)
+        comment_response = self.client.patch(
+            f"/api/comment/{comment_id}/", self.new_comment_data
+        )
 
         expected_status_code = status.HTTP_200_OK
         result_status_code = comment_response.status_code
@@ -191,13 +188,14 @@ class CommentsCreateView(APITestCase):
 
         self.client.post(self.register_url, self.comment_data)
 
-        comment_response = self.client.patch(f"/api/comment/123456/", self.new_comment_data)
+        comment_response = self.client.patch(
+            f"/api/comment/123456/", self.new_comment_data
+        )
 
         expected_status_code = status.HTTP_404_NOT_FOUND
         result_status_code = comment_response.status_code
 
         self.assertEqual(expected_status_code, result_status_code)
-    
 
     def test_delete_a_exist_comment(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login2)
@@ -228,7 +226,6 @@ class CommentsCreateView(APITestCase):
 
         self.assertEqual(expected_status_code, result_status_code)
 
-
     def test_get_all_user_comments(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login)
         user_token = f"Token {response_user_login.data['token']}"
@@ -244,7 +241,7 @@ class CommentsCreateView(APITestCase):
 
         self.assertEqual(expected_status_code, result_status_code)
         self.assertEqual(2, user_comments.data["count"])
-        
+
     def test_get_all_ticket_comments(self):
         response_user_login = self.client.post("/api/login/", self.user_data_login)
         user_token = f"Token {response_user_login.data['token']}"
@@ -260,8 +257,3 @@ class CommentsCreateView(APITestCase):
 
         self.assertEqual(expected_status_code, result_status_code)
         self.assertEqual(2, ticket_comments.data["count"])
-        
-
-        
-
-        

@@ -1,9 +1,7 @@
-import ipdb
 from comments.models import Comment
 from django.forms import ValidationError
 from django.test import TestCase
 from model_bakery import baker
-from tickets.models import Ticket
 
 
 class CommentModelTest(TestCase):

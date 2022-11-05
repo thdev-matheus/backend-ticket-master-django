@@ -1,11 +1,10 @@
-from django.forms import model_to_dict
-from rest_framework import generics
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.views import Request, Response, status
-
 from departments.exceptions import RedundantActivateError, RedundantDeleteError
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
+from django.forms import model_to_dict
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.views import Response, status
 from users.permissions import IsAdm
 
 
