@@ -1,17 +1,13 @@
-import datetime as dt
-
-from django.forms import model_to_dict
-from django.utils import timezone
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import Request, Response, status
+from rest_framework.views import Response, status
+from rest_framework.authtoken.views import ObtainAuthToken, Token
 
 from users.exceptions import RedundantUserActivateError, RedundantUserDeleteError
 from users.models import User
 from users.permissions import IsAdm
 from users.serializers import UserPatchActivateSerializer, UserSerializer
-from utils.mixins import SerializerMapping
 
 
 class UserView(generics.ListCreateAPIView):
@@ -70,3 +66,15 @@ class ListFromDateOlderToNewer(generics.ListAPIView):
     def get_queryset(self):
         queryset = User.objects.all().order_by("date_joined")
         return queryset
+
+class LoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {
+                'token': token.key,
+                "user_id": user.id  
+            })
