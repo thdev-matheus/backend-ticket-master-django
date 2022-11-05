@@ -810,6 +810,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Department'
           description: ''
+  /api/tickets/support_user/{support_user_id}/:
+    get:
+      operationId: api_tickets_support_user_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: support_user_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTicketSerializerNoSupportList'
+          description: ''
   /api/tickets/user/{user_id}/:
     get:
       operationId: api_tickets_user_list
@@ -834,7 +860,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedTicketList'
+                $ref: '#/components/schemas/PaginatedTicketSerializerDetailedList'
           description: ''
   /api/users/:
     get:
@@ -1238,6 +1264,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TicketSerializerDetailed'
+    PaginatedTicketSerializerNoSupportList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketSerializerNoSupport'
     PaginatedUserList:
       type: object
       properties:
@@ -1310,6 +1356,9 @@ components:
           readOnly: true
         urgency:
           $ref: '#/components/schemas/UrgencyEnum'
+        status:
+          type: string
+          readOnly: true
         support_department:
           allOf:
           - $ref: '#/components/schemas/Nested'
@@ -1390,6 +1439,7 @@ components:
         user:
           type: string
           format: uuid
+          readOnly: true
       required:
       - description
       - id
@@ -1476,6 +1526,9 @@ components:
           readOnly: true
         urgency:
           $ref: '#/components/schemas/UrgencyEnum'
+        status:
+          type: string
+          readOnly: true
         support_department:
           type: string
           format: uuid
@@ -1492,6 +1545,7 @@ components:
       - created_at
       - description
       - id
+      - status
     TicketSerializerDetailed:
       type: object
       properties:
@@ -1510,6 +1564,9 @@ components:
           readOnly: true
         urgency:
           $ref: '#/components/schemas/UrgencyEnum'
+        status:
+          type: string
+          readOnly: true
         support_department:
           allOf:
           - $ref: '#/components/schemas/Nested'
@@ -1527,6 +1584,7 @@ components:
       - description
       - id
       - is_solved
+      - status
       - support
       - support_department
       - user
@@ -1547,6 +1605,9 @@ components:
           readOnly: true
         urgency:
           $ref: '#/components/schemas/UrgencyEnum'
+        status:
+          type: string
+          readOnly: true
         user:
           allOf:
           - $ref: '#/components/schemas/User'
@@ -1555,6 +1616,7 @@ components:
       - created_at
       - description
       - id
+      - status
       - user
     UrgencyEnum:
       enum:
