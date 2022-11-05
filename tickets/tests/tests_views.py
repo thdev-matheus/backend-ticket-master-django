@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from users.models import User
 from model_bakery import baker
 from departments.models import Department
-
+import ipdb
 
 class TicketViewTest(APITestCase):
     @classmethod
@@ -42,7 +42,7 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
         response = self.client.post("/api/tickets/", {"description":"descrição"})
-        expected_keys = {"id","description","is_solved","created_at","urgency","support_department","support","user"}
+        expected_keys = {"id","description","is_solved","created_at","urgency","status","support_department","support","user"}
         received_keys = set(response.data.keys())
 
         self.assertEqual(201, response.status_code)
@@ -98,7 +98,7 @@ class TicketViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.get(f"/api/tickets/{self.ticket.id}/")
-        expected_keys = {"id","description","is_solved","created_at","urgency","support_department","support","user"}
+        expected_keys = {"id","description","is_solved","created_at","urgency","status","support_department","support","user"}
         received_keys = set(response.data.keys())
 
         self.assertEqual(200, response.status_code)

@@ -16,3 +16,6 @@ class Solution(models.Model):
         on_delete=models.CASCADE,
         related_name="solved_by",
     )
+    
+    class Meta:
+        ordering = ["id"]

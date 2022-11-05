@@ -32,32 +32,31 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
         "POST": SolutionSerializer,
     }
 
-    def create(self, request, *args, **kwargs):
-        request.data["user"] = request.user.id
+    def perform_create(self, serializer):
+        ticket_obj = Ticket.objects.get(id=self.request.data["ticket"])
+        
+        if (
+            self.request.user != ticket_obj.support
+            and self.request.user != ticket_obj.user
+            and not self.request.user.is_superuser
+        ):
+             raise UnauthorizedUserCreateSolutionError
+        
+        ticket_obj.is_solved = True 
+        ticket_obj.save()  
+        serializer.save(ticket=ticket_obj, user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        ticket_id = request.data["ticket"]
-        ticket = Ticket.objects.get(id=ticket_id)
-
-        if (
-            request.user != ticket.support
-            and request.user != ticket.user
-            and not request.user.is_superuser
-        ):
-            raise UnauthorizedUserCreateSolutionError
         self.perform_create(serializer)
-
-        ticket.is_solved = True
-        ticket.save()
-
         headers = self.get_success_headers(serializer.data)
+        
         solution = Solution.objects.get(id=serializer.data["id"])
-
         serializer = SolutionSerializerDetailedNoSupport(solution)
         return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
     def list(self, request, *args, **kwargs):
@@ -86,7 +85,7 @@ class ListSolutionView(SerializerMapping, generics.RetrieveAPIView):
     lookup_url_kwarg = "solution_id"
 
     def retrieve(self, request, *args, **kwargs):
-
+        
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
@@ -144,7 +143,12 @@ class ListSolutionFromTicketView(generics.RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        solution = Solution.objects.get(ticket=instance)
-        serializer = SolutionSerializerDetailedNoSupport(solution)
-
-        return Response(serializer.data)
+        response = ""
+        if not instance.is_solved:
+            response = {"detail":"This ticket isn't solved"}
+        else:
+            solution = Solution.objects.get(ticket=instance)
+            serializer = SolutionSerializerDetailedNoSupport(solution)
+            response = serializer.data
+        
+        return Response(response)
