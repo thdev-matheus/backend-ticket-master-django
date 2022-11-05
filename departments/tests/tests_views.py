@@ -1,6 +1,5 @@
 import ipdb
 from rest_framework.test import APITestCase
-
 from users.models import User
 
 
@@ -8,10 +7,12 @@ class CreateDepartmentViewTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user_admin = User.objects.create_superuser(
-            username="AdminUser", password="1234"
+            username="AdminUser",
+            password="1234",
         )
         cls.user_non_admin = User.objects.create_user(
-            username="NonAdminUser", password="1234"
+            username="NonAdminUser",
+            password="1234",
         )
 
         cls.user_admin_data_login = {
@@ -31,15 +32,21 @@ class CreateDepartmentViewTest(APITestCase):
     def setUp(self) -> None:
         login_admin = self.client.post("/api/login/", self.user_admin_data_login)
         login_non_admin = self.client.post(
-            "/api/login/", self.user_non_admin_data_login
+            "/api/login/",
+            self.user_non_admin_data_login,
         )
 
         self.token_admin = f"Token {login_admin.data['token']}"
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
 
     def test_creation_department_with_admin_token(self):
-        self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        response = self.client.post("/api/department/", self.department_data)
+        self.client.credentials(
+            HTTP_AUTHORIZATION=self.token_admin,
+        )
+        response = self.client.post(
+            "/api/department/",
+            self.department_data,
+        )
         expected_keys = {
             "id",
             "name",
@@ -48,7 +55,10 @@ class CreateDepartmentViewTest(APITestCase):
         received_keys = set(response.data.keys())
 
         self.assertEqual(201, response.status_code)
-        self.assertSetEqual(expected_keys, received_keys)
+        self.assertSetEqual(
+            expected_keys,
+            received_keys,
+        )
         self.assertTrue(response.data["is_active"])
 
     def test_creation_department_with_non_admin_token(self):
@@ -79,10 +89,12 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user_admin = User.objects.create_superuser(
-            username="AdminUser", password="1234"
+            username="AdminUser",
+            password="1234",
         )
         cls.user_non_admin = User.objects.create_user(
-            username="NonAdminUser", password="1234"
+            username="NonAdminUser",
+            password="1234",
         )
 
         cls.user_admin_data_login = {
@@ -100,16 +112,23 @@ class PatchDeleteDepartmentViewTest(APITestCase):
         }
 
     def setUp(self) -> None:
-        login_admin = self.client.post("/api/login/", self.user_admin_data_login)
+        login_admin = self.client.post(
+            "/api/login/",
+            self.user_admin_data_login,
+        )
         self.token_admin = f"Token {login_admin.data['token']}"
 
         login_non_admin = self.client.post(
-            "/api/login/", self.user_non_admin_data_login
+            "/api/login/",
+            self.user_non_admin_data_login,
         )
         self.token_non_admin = f"Token {login_non_admin.data['token']}"
 
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        department_response = self.client.post("/api/department/", {"name": "TI"})
+        department_response = self.client.post(
+            "/api/department/",
+            {"name": "TI"},
+        )
         self.department = department_response.data
 
         self.client.credentials(HTTP_AUTHORIZATION="")
@@ -154,7 +173,8 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_update_department_with_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.patch(
-            f"/api/department/{self.department['id']}/", self.department_patch_data
+            f"/api/department/{self.department['id']}/",
+            self.department_patch_data,
         )
         expected_keys = {
             "id",
@@ -171,7 +191,8 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_update_department_with_non_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
         response = self.client.patch(
-            f"/api/department/{self.department['id']}/", self.department_patch_data
+            f"/api/department/{self.department['id']}/",
+            self.department_patch_data,
         )
 
         self.assertEqual(403, response.status_code)
@@ -181,7 +202,8 @@ class PatchDeleteDepartmentViewTest(APITestCase):
     def test_update_department_that_not_exist(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.patch(
-            f"/api/department/id_que_não_existe/", self.department_patch_data
+            f"/api/department/id_que_não_existe/",
+            self.department_patch_data,
         )
 
         self.assertEqual(404, response.status_code)
@@ -190,7 +212,8 @@ class PatchDeleteDepartmentViewTest(APITestCase):
 
     def test_update_department_whitout_token(self):
         response = self.client.patch(
-            f"/api/department/{self.department['id']}/", self.department_patch_data
+            f"/api/department/{self.department['id']}/",
+            self.department_patch_data,
         )
 
         self.assertEqual(401, response.status_code)
@@ -247,10 +270,12 @@ class ReactivateDepartmentViewTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user_admin = User.objects.create_superuser(
-            username="AdminUser", password="1234"
+            username="AdminUser",
+            password="1234",
         )
         cls.user_non_admin = User.objects.create_user(
-            username="NonAdminUser", password="1234"
+            username="NonAdminUser",
+            password="1234",
         )
 
         cls.user_admin_data_login = {
