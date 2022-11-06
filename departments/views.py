@@ -14,6 +14,12 @@ class CreateDepartmentView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class PatchDeleteDepartmentView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
