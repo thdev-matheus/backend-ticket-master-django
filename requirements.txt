@@ -9,6 +9,7 @@ coverage==6.5.0
 decorator==5.1.1
 dj-database-url==1.0.0
 Django==4.1.2
+django-cors-headers==3.13.0
 djangorestframework==3.14.0
 drf-spectacular==0.24.2
 executing==1.1.1

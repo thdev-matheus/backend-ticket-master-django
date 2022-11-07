@@ -50,6 +50,7 @@ THIRD_PART_APPS = [
     "rest_framework",
     "rest_framework.authtoken",  # ou jwt
     "drf_spectacular",
+    "corsheaders",
 ]
 
 MY_APPS = [
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "_project.urls"
@@ -209,3 +211,5 @@ if (
     )
     DATABASES["default"].update(db_from_env)
     DEBUG = False  # seta o debug pra False quando estiver em produção
+
+CORS_ALLOW_ALL_ORIGINS = True
