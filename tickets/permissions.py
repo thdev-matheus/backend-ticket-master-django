@@ -25,6 +25,6 @@ class IsFromDepartment(permissions.BasePermission):
     ):
         return (
             request.user.is_authenticated
-            and request.user.department == department.id
+            and request.user.department.id == department.id
             or request.user.is_superuser
         )
