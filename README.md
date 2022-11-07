@@ -69,7 +69,7 @@ Este projeto foi criado e estruturado por:
     <td align="center">
         <img src="https://avatars.githubusercontent.com/u/99337068?v=4" width="100px;" alt="Foto do André no GitHub"/><br>
         <sub>
-          <a href="https://github.com/Andre-Volcov" target="_blank"><b>André Perregil - DEV</b></a>
+          <a href="https://github.com/Andre-Volcov" target="_blank"><b>André Volcov - DEV</b></a>
         </sub>
     </td>
     
