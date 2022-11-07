@@ -25,7 +25,7 @@ from tickets.serializers import (
 )
 from users.models import User
 from users.permissions import IsAdm
-
+import ipdb
 
 class ListCreateTicketsView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -127,7 +127,13 @@ class ListTicketsFromDepartmentView(generics.RetrieveAPIView):
         return Response(serializer.data)
 
 
-class ListMostUrgentTicketView(ListTicketsFromDepartmentView):
+class ListMostUrgentTicketView(generics.RetrieveAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsFromDepartment]
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    lookup_url_kwarg = "department_id"
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
