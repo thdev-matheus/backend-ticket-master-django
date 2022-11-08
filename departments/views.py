@@ -5,12 +5,12 @@ from django.forms import model_to_dict
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import Response, status
-from users.permissions import IsAdm
+from users.permissions import IsAdm, IsAdmOrListOnly
 
 
 class CreateDepartmentView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAdm]
+    permission_classes = [IsAdmOrListOnly]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
