@@ -34,7 +34,7 @@ class ListCreateTicketsView(generics.ListCreateAPIView):
     serializer_class = TicketSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
 
@@ -67,14 +67,14 @@ class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
 
         instance = self.get_object()
-        instance.support = request.user
+        instance.support_user = request.user
         instance.save()
         raw_data = model_to_dict(instance)
         data = {
             "description": raw_data["description"],
             "is_solved": raw_data["is_solved"],
             "urgency": raw_data["urgency"],
-            "support": {"id": request.user.id, "name": request.user.username},
+            "support_user": {"id": request.user.id, "name": request.user.username},
         }
         return Response(data, status=status.HTTP_200_OK)
 
@@ -142,28 +142,28 @@ class ListMostUrgentTicketView(generics.RetrieveAPIView):
         tickets = Ticket.objects.all().filter(
             support_department=dpt_id,
             is_solved=False,
-            support__isnull=True,
+            support_user__isnull=True,
             urgency="High",
         )
         if not tickets:
             tickets = Ticket.objects.all().filter(
                 support_department=dpt_id,
                 is_solved=False,
-                support__isnull=True,
+                support_user__isnull=True,
                 urgency="Average",
             )
         if not tickets:
             tickets = Ticket.objects.all().filter(
                 support_department=dpt_id,
                 is_solved=False,
-                support__isnull=True,
+                support_user__isnull=True,
                 urgency="Low",
             )
 
         if tickets:
             tickets = sorted(tickets, key=lambda x: x.created_at)
             instance = Ticket.objects.get(id=tickets[0].id)
-            instance.support = request.user
+            instance.support_user = request.user
             instance.save()
             serializer = TicketSerializerNoDepartment(instance)
             return Response(serializer.data)
@@ -183,7 +183,7 @@ class ListTicketsFromUserView(generics.ListAPIView):
 
     def get_queryset(self):
         user_obj = User.objects.get(id=self.kwargs.get("user_id"))
-        queryset = Ticket.objects.filter(user=user_obj)
+        queryset = Ticket.objects.filter(owner=user_obj)
 
         if not queryset:
             raise NoTicketsError
@@ -191,7 +191,7 @@ class ListTicketsFromUserView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        if request.user != queryset[0].user and not request.user.is_superuser:
+        if request.user != queryset[0].owner and not request.user.is_superuser:
             raise UnathorizedListingError
 
         page = self.paginate_queryset(queryset)
@@ -210,7 +210,7 @@ class ListTicketFromSupportUserView(generics.ListAPIView):
 
     def get_queryset(self):
         user_obj = User.objects.get(id=self.kwargs.get("support_user_id"))
-        queryset = Ticket.objects.filter(support=user_obj, is_solved=False)
+        queryset = Ticket.objects.filter(support_user=user_obj, is_solved=False)
 
         if not queryset:
             raise NoTicketsToSolveError
@@ -219,7 +219,7 @@ class ListTicketFromSupportUserView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
-        if request.user != queryset[0].support and not request.user.is_superuser:
+        if request.user != queryset[0].support_user and not request.user.is_superuser:
             raise UnathorizedListingError
 
         page = self.paginate_queryset(queryset)

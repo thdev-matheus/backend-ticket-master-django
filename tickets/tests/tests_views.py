@@ -50,8 +50,8 @@ class TicketViewTest(APITestCase):
             "urgency",
             "status",
             "support_department",
-            "support",
-            "user",
+            "support_user",
+            "owner",
         }
         received_keys = set(response.data.keys())
 
@@ -115,8 +115,8 @@ class TicketViewTest(APITestCase):
             "urgency",
             "status",
             "support_department",
-            "support",
-            "user",
+            "support_user",
+            "owner",
         }
         received_keys = set(response.data.keys())
 
@@ -167,8 +167,8 @@ class TicketViewTest(APITestCase):
             "is_solved",
             "urgency",
             "support_department",
-            "support",
-            "user",
+            "support_user",
+            "owner",
         }
         received_keys = set(response.data.keys())
 
@@ -258,7 +258,7 @@ class TicketViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.patch(f"/api/tickets/{self.ticket.id}/")
 
-        expected_keys = {"description", "is_solved", "urgency", "support"}
+        expected_keys = {"description", "is_solved", "urgency", "support_user"}
         received_keys = set(response.data.keys())
         self.assertEqual(200, response.status_code)
         self.assertSetEqual(expected_keys, received_keys)
