@@ -7,9 +7,9 @@ from tickets.models import Ticket
 class IsOwnerOrFromDepartment(permissions.BasePermission):
     def has_object_permission(self, request: Request, view: View, ticket: Ticket):
         return (
-            request.user == ticket.user
+            request.user == ticket.owner
             or request.user.is_authenticated
-            and request.user.department == ticket.support_department
+            and request.user.support_department == ticket.support_department
             or request.user.is_superuser
         )
 
@@ -25,6 +25,6 @@ class IsFromDepartment(permissions.BasePermission):
     ):
         return (
             request.user.is_authenticated
-            and request.user.department.id == department.id
+            and request.user.support_department == department
             or request.user.is_superuser
         )

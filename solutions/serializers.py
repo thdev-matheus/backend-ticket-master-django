@@ -14,12 +14,12 @@ class SolutionSerializer(serializers.ModelSerializer):
             "solved_at",
             "time_taken",
             "ticket",
-            "user",
+            "solver",
         ]
         read_only_fields = [
             "id",
             "solved_at",
-            "user",
+            "solver",
         ]
 
     time_taken = serializers.SerializerMethodField()
@@ -36,7 +36,7 @@ class SolutionSerializerDetailedNoSupport(serializers.ModelSerializer):
             "description",
             "solved_at",
             "time_taken",
-            "user",
+            "solver",
             "ticket",
         ]
         read_only_fields = [
@@ -45,7 +45,7 @@ class SolutionSerializerDetailedNoSupport(serializers.ModelSerializer):
         ]
         depth = 1
 
-    user = UserSerializer(read_only=True)
+    solver = UserSerializer(read_only=True)
     ticket = TicketSerializerNoSupport(read_only=True)
 
     time_taken = serializers.SerializerMethodField()
@@ -62,7 +62,7 @@ class SolutionSerializerDetailed(serializers.ModelSerializer):
             "description",
             "solved_at",
             "time_taken",
-            "user",
+            "solver",
             "ticket",
         ]
         read_only_fields = [
@@ -71,7 +71,7 @@ class SolutionSerializerDetailed(serializers.ModelSerializer):
         ]
         depth = 1
 
-    user = UserSerializer(read_only=True)
+    solver = UserSerializer(read_only=True)
     ticket = TicketSerializerDetailed(read_only=True)
 
     time_taken = serializers.SerializerMethodField()

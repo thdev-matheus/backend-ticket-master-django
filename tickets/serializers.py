@@ -15,8 +15,8 @@ class TicketSerializer(serializers.ModelSerializer):
             "urgency",
             "status",
             "support_department",
-            "user",
-            "support",
+            "owner",
+            "support_user",
         ]
         read_only_fields = [
             "id",
@@ -40,8 +40,8 @@ class TicketSerializerDetailed(serializers.ModelSerializer):
             "urgency",
             "status",
             "support_department",
-            "user",
-            "support",
+            "owner",
+            "support_user",
         ]
         read_only_fields = [
             "id",
@@ -50,8 +50,8 @@ class TicketSerializerDetailed(serializers.ModelSerializer):
         ]
         depth = 1
 
-    user = UserSerializer(read_only=True)
-    support = UserSerializer(read_only=True)
+    owner = UserSerializer(read_only=True)
+    support_user = UserSerializer(read_only=True)
     status = serializers.SerializerMethodField()
 
     def get_status(self, obj):
@@ -68,8 +68,8 @@ class TicketSerializerNoDepartment(serializers.ModelSerializer):
             "created_at",
             "urgency",
             "status",
-            "user",
-            "support",
+            "owner",
+            "support_user",
         ]
         read_only_fields = [
             "id",
@@ -77,8 +77,8 @@ class TicketSerializerNoDepartment(serializers.ModelSerializer):
         ]
         depth = 1
 
-    user = UserSerializer(read_only=True)
-    support = UserSerializerSupport(read_only=True)
+    owner = UserSerializer(read_only=True)
+    support_user = UserSerializerSupport(read_only=True)
     status = serializers.SerializerMethodField()
 
     def get_status(self, obj):
@@ -95,7 +95,7 @@ class TicketSerializerNoSupport(serializers.ModelSerializer):
             "created_at",
             "urgency",
             "status",
-            "user",
+            "owner",
         ]
         read_only_fields = [
             "id",
@@ -103,7 +103,7 @@ class TicketSerializerNoSupport(serializers.ModelSerializer):
         ]
         depth = 1
 
-    user = UserSerializer(read_only=True)
+    owner = UserSerializer(read_only=True)
     status = serializers.SerializerMethodField()
 
     def get_status(self, obj):

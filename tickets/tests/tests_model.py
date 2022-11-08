@@ -15,8 +15,8 @@ class TicketModelTest(TestCase):
             "created_at",
             "urgency",
             "support_department_id",
-            "support_id",
-            "user_id",
+            "support_user_id",
+            "owner_id",
         }
         received_keys = set(vars(ticket).keys())
 

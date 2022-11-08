@@ -12,7 +12,7 @@ class IsAdmOrFromTicketDepartmentOrOwner(permissions.BasePermission):
     ):
         return (
             request.user.is_superuser
-            or request.user == ticket.support
-            or request.user.department == ticket.support_department
-            or request.user == ticket.user
+            or request.user == ticket.support_user
+            or request.user.support_department == ticket.support_department
+            or request.user == ticket.owner
         )

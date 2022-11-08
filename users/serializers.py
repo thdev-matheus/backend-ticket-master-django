@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
             "password",
         ]
@@ -36,7 +36,7 @@ class UserPatchActivateSerializer(serializers.ModelSerializer):
             "username",
             "is_active",
             "date_joined",
-            "department",
+            "support_department",
         ]
 
 

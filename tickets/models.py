@@ -26,14 +26,14 @@ class Ticket(models.Model):
         null=True,
         related_name="tickets",
     )
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="tickets",
     )
-    support = models.ForeignKey(
+    support_user = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
         blank=True,

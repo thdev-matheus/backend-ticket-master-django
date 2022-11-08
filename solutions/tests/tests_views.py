@@ -11,7 +11,7 @@ class SolutionsViewsTest(APITestCase):
         cls.department = Department.objects.create(name="departamento")
 
         cls.user_admin = User.objects.create_superuser(
-            username="AdminUser", password="1234", department=cls.department
+            username="AdminUser", password="1234", support_department=cls.department
         )
         cls.user_non_admin = User.objects.create_user(
             username="NonAdminUser", password="1234"
@@ -33,20 +33,20 @@ class SolutionsViewsTest(APITestCase):
         cls.ticket = baker.make(
             "tickets.Ticket",
             urgency=UrgencyCategories.DEFAULT,
-            user=cls.user_non_admin,
+            owner=cls.user_non_admin,
             support_department=cls.department,
         )
         cls.ticket2 = baker.make(
             "tickets.Ticket",
             urgency=UrgencyCategories.AVERAGE,
-            user=cls.user_non_admin2,
+            owner=cls.user_non_admin2,
             support_department=cls.department,
             is_solved=True,
         )
         cls.solution = baker.make(
             "solutions.Solution",
             ticket=cls.ticket2,
-            user=cls.user_non_admin2,
+            solver=cls.user_non_admin2,
         )
 
     def setUp(self) -> None:
@@ -83,7 +83,7 @@ class SolutionsViewsTest(APITestCase):
             "solved_at",
             "time_taken",
             "ticket",
-            "user",
+            "solver",
         }
         received_keys = set(response.data.keys())
 
@@ -126,7 +126,7 @@ class SolutionsViewsTest(APITestCase):
             "solved_at",
             "time_taken",
             "ticket",
-            "user",
+            "solver",
         }
         received_keys = set(response.data.keys())
 
@@ -167,7 +167,7 @@ class SolutionsViewsTest(APITestCase):
             "solved_at",
             "time_taken",
             "ticket",
-            "user",
+            "solver",
         }
         received_keys = set(response.data.keys())
         self.assertEqual(200, response.status_code)
