@@ -11,7 +11,7 @@ class Solution(models.Model):
         "tickets.Ticket",
         on_delete=models.CASCADE,
     )
-    user = models.ForeignKey(
+    solver = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
         related_name="solved_by",

@@ -79,7 +79,7 @@ class UserViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
         }
         received_keys = set(response.data.keys())
@@ -170,7 +170,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
         }
         received_keys = set(response.data.keys())
@@ -211,7 +211,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
         }
         received_keys = set(response.data.keys())
@@ -245,7 +245,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_active",
             "date_joined",
         }
@@ -321,7 +321,7 @@ class UserReactivateViewTest(APITestCase):
             "username",
             "is_active",
             "date_joined",
-            "department",
+            "support_department",
         }
         received_keys = set(response.data.keys())
 

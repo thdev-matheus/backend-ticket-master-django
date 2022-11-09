@@ -25,7 +25,7 @@ class isSameDepartamentOrOwnerTicket(permissions.BasePermission):
         ticket_obj = Ticket.objects.get(id=ticket_id)
 
         return (
-            request.user.department_id == ticket_obj.support_department_id
-            or request.user.id == ticket_obj.user_id
+            request.user.support_department_id == ticket_obj.support_department_id
+            or request.user.id == ticket_obj.owner_id
             or request.user.is_superuser
         )

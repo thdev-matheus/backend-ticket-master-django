@@ -12,11 +12,11 @@ class SerializerMapping:
 
 def get_ticket_status(self, obj):
     status = ""
-    if not obj.support:
+    if not obj.support_user and not obj.is_solved:
         status = "Waiting"
-    if obj.support and not obj.is_solved:
+    if obj.support_user and not obj.is_solved:
         status = "In progress"
-    if obj.support and obj.is_solved:
+    if obj.is_solved:
         status = "Closed"
     return status
 

@@ -18,7 +18,7 @@ class CommentsCreateView(APITestCase):
             description="Ticket test description",
             urgency="High",
             support_department=cls.department,
-            user=cls.user,
+            owner=cls.user,
         )
 
         cls.register_url = f"/api/comment/register/{cls.ticket.id}/"

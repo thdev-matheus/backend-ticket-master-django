@@ -34,15 +34,15 @@ class ListCreateSolutionsView(SerializerMapping, generics.ListCreateAPIView):
         ticket_obj = Ticket.objects.get(id=self.request.data["ticket"])
 
         if (
-            self.request.user != ticket_obj.support
-            and self.request.user != ticket_obj.user
+            self.request.user != ticket_obj.support_user
+            and self.request.user != ticket_obj.owner
             and not self.request.user.is_superuser
         ):
             raise UnauthorizedUserCreateSolutionError
 
         ticket_obj.is_solved = True
         ticket_obj.save()
-        serializer.save(ticket=ticket_obj, user=self.request.user)
+        serializer.save(ticket=ticket_obj, solver=self.request.user)
 
     def create(self, request, *args, **kwargs):
 
@@ -88,12 +88,12 @@ class ListSolutionView(SerializerMapping, generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
 
         department_id = instance.ticket.support_department.id
-        ticket_owner = instance.ticket.user
+        ticket_owner = instance.ticket.owner
 
         def is_not_from_dept():
-            if not request.user.department:
+            if not request.user.support_department:
                 return True
-            return department_id != request.user.department.id
+            return department_id != request.user.support_department.id
 
         if (
             not request.user.is_superuser
@@ -116,9 +116,9 @@ class ListAllSolutionFromDepartmentView(generics.RetrieveAPIView):
         instance = self.get_object()
 
         def is_not_from_dept():
-            if not request.user.department:
+            if not request.user.support_department:
                 return True
-            return instance.id != request.user.department.id
+            return instance.id != request.user.support_department.id
 
         if is_not_from_dept() and not request.user.is_superuser:
             raise UnauthorizedUserListSolutionError
