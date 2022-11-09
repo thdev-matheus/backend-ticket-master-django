@@ -1,8 +1,6 @@
-import ipdb
 from django.forms import ValidationError
 from django.test import TestCase
 from model_bakery import baker
-
 from tickets.models import Ticket, UrgencyCategories
 
 
@@ -17,8 +15,8 @@ class TicketModelTest(TestCase):
             "created_at",
             "urgency",
             "support_department_id",
-            "support_id",
-            "user_id",
+            "support_user_id",
+            "owner_id",
         }
         received_keys = set(vars(ticket).keys())
 

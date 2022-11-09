@@ -1,4 +1,3 @@
-import ipdb
 from departments.models import Department
 from django.forms import ValidationError
 from django.test import TestCase

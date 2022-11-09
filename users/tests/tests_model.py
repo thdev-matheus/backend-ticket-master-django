@@ -1,4 +1,3 @@
-import ipdb
 from django.db import IntegrityError
 from django.forms import ValidationError
 from django.test import TestCase
@@ -20,7 +19,7 @@ class UserModelTest(TestCase):
             "date_joined",
             "username",
             "_state",
-            "department_id",
+            "support_department_id",
             "last_login",
             "password",
         }
@@ -34,8 +33,8 @@ class UserModelTest(TestCase):
         self.assertIn("id", vars(user))
         self.assertIn("username", vars(user))
         self.assertIn("password", vars(user))
-        self.assertIn("department_id", vars(user))
-        self.assertIsNone(user.department_id)
+        self.assertIn("support_department_id", vars(user))
+        self.assertIsNone(user.support_department_id)
 
     def test_unique_username(self):
         user = baker.make("users.User")
@@ -57,4 +56,4 @@ class UserModelTest(TestCase):
     def test_field_department_id_can_be_null(self):
         user = baker.make("users.User")
 
-        self.assertIsNone(user.department_id)
+        self.assertIsNone(user.support_department_id)

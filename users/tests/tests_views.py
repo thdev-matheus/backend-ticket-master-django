@@ -1,6 +1,4 @@
-import ipdb
 from rest_framework.test import APITestCase
-
 from users.models import User
 
 
@@ -81,7 +79,7 @@ class UserViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
             "is_active",
         }
@@ -173,7 +171,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
             "is_active",
         }
@@ -215,7 +213,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_superuser",
             "is_active",
         }
@@ -250,7 +248,7 @@ class UserDeleteViewTest(APITestCase):
         expected_keys = {
             "id",
             "username",
-            "department",
+            "support_department",
             "is_active",
             "date_joined",
         }
@@ -326,7 +324,7 @@ class UserReactivateViewTest(APITestCase):
             "username",
             "is_active",
             "date_joined",
-            "department",
+            "support_department",
         }
         received_keys = set(response.data.keys())
 

@@ -1,19 +1,24 @@
-from django.forms import model_to_dict
-from rest_framework import generics
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.views import Request, Response, status
-
 from departments.exceptions import RedundantActivateError, RedundantDeleteError
 from departments.models import Department
 from departments.serializers import DepartmentSerializer
-from users.permissions import IsAdm
+from django.forms import model_to_dict
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.views import Response, status
+from users.permissions import IsAdm, IsAdmOrListOnly
 
 
 class CreateDepartmentView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAdm]
+    permission_classes = [IsAdmOrListOnly]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class PatchDeleteDepartmentView(generics.RetrieveUpdateDestroyAPIView):
