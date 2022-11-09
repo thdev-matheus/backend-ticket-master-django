@@ -57,8 +57,8 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ListFromDateOlderToNewer(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAdm]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAdm]
     serializer_class = UserSerializer
 
     def get_queryset(self):
