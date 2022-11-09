@@ -192,8 +192,8 @@ REST_FRAMEWORK = {
 # Config da Documentação
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ticket Master",
-    "DESCRIPTION": "Esta API foi criada para a entrega do projeto final do M5",
-    "VERSION": "1.0.0",
+    "DESCRIPTION": "Repository dedicated to the back end of the project to complete the 5th module of the full stack web development training course at Kenzie Academy Brasil.",
+    "VERSION": "V1.1.0 - Release",
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
