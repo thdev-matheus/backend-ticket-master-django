@@ -1,8 +1,10 @@
 openapi: 3.0.3
 info:
   title: Ticket Master
-  version: 1.0.0
-  description: Esta API foi criada para a entrega do projeto final do M5
+  version: V1.1.0 - Release
+  description: Repository dedicated to the back end of the project to complete the
+    5th module of the full stack web development training course at Kenzie Academy
+    Brasil.
 paths:
   /api/comment/{comment_id}/:
     get:
@@ -766,6 +768,72 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/tickets/assing_support/{ticket_id}/:
+    put:
+      operationId: api_tickets_assing_support_update
+      parameters:
+      - in: path
+        name: ticket_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this ticket.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketSerializerDetailed'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TicketSerializerDetailed'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TicketSerializerDetailed'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSerializerDetailed'
+          description: ''
+    patch:
+      operationId: api_tickets_assing_support_partial_update
+      parameters:
+      - in: path
+        name: ticket_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this ticket.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTicketSerializerDetailed'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTicketSerializerDetailed'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTicketSerializerDetailed'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSerializerDetailed'
+          description: ''
   /api/tickets/department/{department_id}/:
     get:
       operationId: api_tickets_department_retrieve
@@ -1004,9 +1072,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/users/{user_id}/userActivate/:
+  /api/users/{user_id}/activate/:
     put:
-      operationId: api_users_userActivate_update
+      operationId: api_users_activate_update
       parameters:
       - in: path
         name: user_id
@@ -1037,7 +1105,7 @@ paths:
                 $ref: '#/components/schemas/UserPatchActivate'
           description: ''
     patch:
-      operationId: api_users_userActivate_partial_update
+      operationId: api_users_activate_partial_update
       parameters:
       - in: path
         name: user_id
@@ -1079,7 +1147,9 @@ paths:
       tags:
       - api
       security:
-      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -1363,11 +1433,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/Nested'
           readOnly: true
-        user:
+        owner:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
-        support:
+        support_user:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
@@ -1381,7 +1451,7 @@ components:
         username:
           type: string
           maxLength: 20
-        department:
+        support_department:
           type: string
           format: uuid
           nullable: true
@@ -1395,6 +1465,12 @@ components:
           type: string
           writeOnly: true
           maxLength: 128
+        is_active:
+          type: boolean
+          readOnly: true
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
     PatchedUserPatchActivate:
       type: object
       properties:
@@ -1413,7 +1489,7 @@ components:
         date_joined:
           type: string
           format: date-time
-        department:
+        support_department:
           type: string
           format: uuid
           nullable: true
@@ -1436,7 +1512,7 @@ components:
         ticket:
           type: string
           format: uuid
-        user:
+        solver:
           type: string
           format: uuid
           readOnly: true
@@ -1444,9 +1520,9 @@ components:
       - description
       - id
       - solved_at
+      - solver
       - ticket
       - time_taken
-      - user
     SolutionSerializerDetailed:
       type: object
       properties:
@@ -1463,7 +1539,7 @@ components:
         time_taken:
           type: string
           readOnly: true
-        user:
+        solver:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
@@ -1475,9 +1551,9 @@ components:
       - description
       - id
       - solved_at
+      - solver
       - ticket
       - time_taken
-      - user
     SolutionSerializerDetailedNoSupport:
       type: object
       properties:
@@ -1494,7 +1570,7 @@ components:
         time_taken:
           type: string
           readOnly: true
-        user:
+        solver:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
@@ -1506,9 +1582,9 @@ components:
       - description
       - id
       - solved_at
+      - solver
       - ticket
       - time_taken
-      - user
     Ticket:
       type: object
       properties:
@@ -1533,11 +1609,11 @@ components:
           type: string
           format: uuid
           nullable: true
-        user:
+        owner:
           type: string
           format: uuid
           nullable: true
-        support:
+        support_user:
           type: string
           format: uuid
           nullable: true
@@ -1571,11 +1647,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/Nested'
           readOnly: true
-        user:
+        owner:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
-        support:
+        support_user:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
@@ -1584,10 +1660,10 @@ components:
       - description
       - id
       - is_solved
+      - owner
       - status
-      - support
       - support_department
-      - user
+      - support_user
     TicketSerializerNoSupport:
       type: object
       properties:
@@ -1608,7 +1684,7 @@ components:
         status:
           type: string
           readOnly: true
-        user:
+        owner:
           allOf:
           - $ref: '#/components/schemas/User'
           readOnly: true
@@ -1616,8 +1692,8 @@ components:
       - created_at
       - description
       - id
+      - owner
       - status
-      - user
     UrgencyEnum:
       enum:
       - High
@@ -1634,7 +1710,7 @@ components:
         username:
           type: string
           maxLength: 20
-        department:
+        support_department:
           type: string
           format: uuid
           nullable: true
@@ -1648,8 +1724,15 @@ components:
           type: string
           writeOnly: true
           maxLength: 128
+        is_active:
+          type: boolean
+          readOnly: true
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
       required:
       - id
+      - is_active
       - is_superuser
       - password
       - username
@@ -1671,7 +1754,7 @@ components:
         date_joined:
           type: string
           format: date-time
-        department:
+        support_department:
           type: string
           format: uuid
           nullable: true
