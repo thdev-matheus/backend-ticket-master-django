@@ -64,6 +64,13 @@ class TicketDetailedView(generics.RetrieveUpdateDestroyAPIView):
             return Response(data, status=status.HTTP_200_OK)
         raise RedundantSolveError
 
+class TicketAssignSupportView(generics.UpdateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsOwnerOrFromDepartment]
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializerDetailed
+    lookup_url_kwarg = "ticket_id"
+
     def update(self, request, *args, **kwargs):
 
         instance = self.get_object()
