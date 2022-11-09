@@ -83,6 +83,7 @@ class UserViewTest(APITestCase):
             "username",
             "department",
             "is_superuser",
+            "is_active",
         }
         received_keys = set(response.data.keys())
 
@@ -174,6 +175,7 @@ class UserDeleteViewTest(APITestCase):
             "username",
             "department",
             "is_superuser",
+            "is_active",
         }
         received_keys = set(response.data.keys())
 
@@ -215,6 +217,7 @@ class UserDeleteViewTest(APITestCase):
             "username",
             "department",
             "is_superuser",
+            "is_active",
         }
         received_keys = set(response.data.keys())
 
