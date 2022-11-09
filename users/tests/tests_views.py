@@ -1,4 +1,5 @@
 from rest_framework.test import APITestCase
+
 from users.models import User
 
 
@@ -306,9 +307,7 @@ class UserReactivateViewTest(APITestCase):
 
     def test_reactivate_user_with_non_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_non_admin)
-        response = self.client.patch(
-            f"/api/users/{self.user_non_admin2.id}/userActivate/"
-        )
+        response = self.client.patch(f"/api/users/{self.user_non_admin2.id}/activate/")
 
         self.assertEqual(403, response.status_code)
         self.assertIn("detail", response.data)
@@ -316,9 +315,7 @@ class UserReactivateViewTest(APITestCase):
 
     def test_reactivate_user_with_admin_token(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        response = self.client.patch(
-            f"/api/users/{self.user_non_admin2.id}/userActivate/"
-        )
+        response = self.client.patch(f"/api/users/{self.user_non_admin2.id}/activate/")
         expected_keys = {
             "id",
             "username",
@@ -335,9 +332,7 @@ class UserReactivateViewTest(APITestCase):
 
     def test_reactivate_user_that_not_exist(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        response = self.client.patch(
-            f"/api/users/asdfqwerqwerqwerqwerasds/userActivate/"
-        )
+        response = self.client.patch(f"/api/users/asdfqwerqwerqwerqwerasds/activate/")
 
         self.assertEqual(404, response.status_code)
         self.assertIn("detail", response.data)
@@ -345,9 +340,7 @@ class UserReactivateViewTest(APITestCase):
 
     def test_reactivate_a_already_active_user(self):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
-        response = self.client.patch(
-            f"/api/users/{self.user_non_admin.id}/userActivate/"
-        )
+        response = self.client.patch(f"/api/users/{self.user_non_admin.id}/activate/")
 
         self.assertEqual(401, response.status_code)
         self.assertIn("detail", response.data)

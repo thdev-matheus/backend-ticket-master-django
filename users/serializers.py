@@ -1,12 +1,24 @@
 from rest_framework import serializers
+
 from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "department", "is_superuser", "password", "is_active",]
-        read_only_fields = ["id", "is_superuser", "is_active",]
+        fields = [
+            "id",
+            "username",
+            "support_department",
+            "is_superuser",
+            "password",
+            "is_active",
+        ]
+        read_only_fields = [
+            "id",
+            "is_superuser",
+            "is_active",
+        ]
 
         extra_kwargs = {
             "password": {
@@ -23,7 +35,15 @@ class UserSerializer(serializers.ModelSerializer):
 class UserPatchActivateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "is_active", "date_joined", "department", "is_active",]
+        fields = [
+            "id",
+            "username",
+            "is_active",
+            "date_joined",
+            "support_department",
+            "is_active",
+        ]
+
 
 class UserSerializerSupport(serializers.ModelSerializer):
     class Meta:
