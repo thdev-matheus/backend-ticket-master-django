@@ -30,4 +30,8 @@ urlpatterns = [
         "tickets/support_user/<support_user_id>/",
         views.ListTicketFromSupportUserView.as_view(),
     ),
+    path(
+        "tickets/assing_support/<ticket_id>/",
+        views.TicketAssignSupportView.as_view(),
+    )
 ]
