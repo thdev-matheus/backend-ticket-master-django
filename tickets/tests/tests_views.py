@@ -1,6 +1,7 @@
-from departments.models import Department
 from model_bakery import baker
 from rest_framework.test import APITestCase
+
+from departments.models import Department
 from users.models import User
 
 
@@ -258,7 +259,17 @@ class TicketViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=self.token_admin)
         response = self.client.patch(f"/api/tickets/{self.ticket.id}/")
 
-        expected_keys = {"description", "is_solved", "urgency", "support_user"}
+        expected_keys = {
+            "id",
+            "owner",
+            "status",
+            "created_at",
+            "support_department",
+            "description",
+            "is_solved",
+            "urgency",
+            "support_user",
+        }
         received_keys = set(response.data.keys())
         self.assertEqual(200, response.status_code)
         self.assertSetEqual(expected_keys, received_keys)
